@@ -1,0 +1,2676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <title>Zenova – Study Smarter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Fraunces:ital,wght@0,300;0,400;0,600;0,700;0,900;1,300;1,700&display=swap" rel="stylesheet"/>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <script src="https://js.puter.com/v2/"></script>
+  <style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════ */
+:root {
+  --navy:       #0b1f4a;
+  --navy-mid:   #162c62;
+  --navy-light: #1e3d80;
+  --blue:       #2354e6;
+  --blue-soft:  #3b6aff;
+  --blue-pale:  #eef2ff;
+  --blue-tint:  #dde5ff;
+  --accent:     #f5a623;
+  --accent2:    #ff6b35;
+  --green:      #10b981;
+  --green-pale: #d1fae5;
+  --purple:     #7c3aed;
+  --red:        #ef4444;
+  --white:      #ffffff;
+  --bg:         #f5f7fc;
+  --bg2:        #eef0f8;
+  --text:       #0b1f4a;
+  --text2:      #4a567a;
+  --text3:      #8892b0;
+  --border:     #dde3f0;
+  --border2:    #c8d2e8;
+  --shadow-xs:  0 1px 2px rgba(11,31,74,.05);
+  --shadow-sm:  0 1px 6px rgba(11,31,74,.08);
+  --shadow-md:  0 4px 16px rgba(11,31,74,.11);
+  --shadow-lg:  0 8px 32px rgba(11,31,74,.14);
+  --shadow-xl:  0 16px 48px rgba(11,31,74,.18);
+  --r-xs: 8px; --r-sm: 12px; --r-md: 18px; --r-lg: 24px; --r-xl: 32px;
+  --nav-h: 72px;
+  --font-display: 'Fraunces', serif;
+  --font-body:    'Plus Jakarta Sans', sans-serif;
+  --transition: .22s cubic-bezier(.4,0,.2,1);
+}
+
+/* ═══════════════════════════════════════════
+   RESET
+═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; }
+body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+h1,h2,h3,h4,h5 { font-family: var(--font-display); }
+button { cursor: pointer; border: none; background: none; font-family: inherit; color: inherit; }
+input, textarea, select { font-family: inherit; }
+img { max-width: 100%; display: block; }
+a { text-decoration: none; color: inherit; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+/* ═══════════════════════════════════════════
+   SCREEN SYSTEM
+═══════════════════════════════════════════ */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; flex-direction: column; }
+
+/* ═══════════════════════════════════════════
+   LOADING
+═══════════════════════════════════════════ */
+#loading-screen {
+  position: fixed; inset: 0;
+  background: var(--navy);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  z-index: 9999; gap: 24px;
+  transition: opacity .5s ease;
+}
+#loading-screen.hidden { opacity: 0; pointer-events: none; }
+.loading-logo-wrap { display: flex; align-items: center; gap: 14px; }
+.loading-logo-img  { width: 52px; height: 52px; border-radius: 16px; object-fit: contain; background: white; padding: 6px; }
+.loading-logo-text { font-family: var(--font-display); font-size: 38px; font-weight: 700; color: white; letter-spacing: -1.5px; }
+.loading-tagline { font-size: 13px; color: rgba(255,255,255,.45); font-weight: 500; letter-spacing: .5px; }
+.loading-ring {
+  width: 36px; height: 36px;
+  border: 3px solid rgba(255,255,255,.12);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══════════════════════════════════════════
+   AUTH SCREEN
+═══════════════════════════════════════════ */
+#auth-screen {
+  background: linear-gradient(150deg, #060f28 0%, var(--navy) 40%, var(--navy-mid) 75%, #1a3580 100%);
+  align-items: center; justify-content: center;
+  padding: 24px; position: relative; overflow: hidden;
+  min-height: 100vh;
+}
+.auth-blob { position: absolute; border-radius: 50%; pointer-events: none; }
+.auth-blob.b1 { width: 520px; height: 520px; background: radial-gradient(circle, rgba(35,84,230,.18) 0%, transparent 70%); top: -180px; right: -80px; }
+.auth-blob.b2 { width: 360px; height: 360px; background: radial-gradient(circle, rgba(59,106,255,.12) 0%, transparent 65%); bottom: -80px; left: -60px; }
+.auth-blob.b3 { width: 200px; height: 200px; background: radial-gradient(circle, rgba(245,166,35,.08) 0%, transparent 65%); top: 50%; left: 20%; }
+
+.auth-card {
+  background: white;
+  border-radius: var(--r-xl);
+  padding: 44px 38px;
+  width: 100%; max-width: 430px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.3), 0 0 0 1px rgba(255,255,255,.1);
+  position: relative; z-index: 1;
+  animation: slideUp .5s cubic-bezier(.22,1,.36,1);
+}
+@keyframes slideUp { from { opacity:0; transform:translateY(32px); } to { opacity:1; transform:translateY(0); } }
+
+.auth-logo { display: flex; align-items: center; gap: 12px; justify-content: center; margin-bottom: 28px; }
+.auth-logo-img { width: 48px; height: 48px; border-radius: 14px; object-fit: contain; background: var(--navy); padding: 6px; }
+.auth-logo-name { font-family: var(--font-display); font-size: 30px; font-weight: 700; color: var(--navy); letter-spacing: -1px; }
+
+.auth-headline { font-family: var(--font-display); font-size: 23px; font-weight: 700; color: var(--navy); text-align: center; margin-bottom: 5px; }
+.auth-sub { font-size: 14px; color: var(--text3); text-align: center; margin-bottom: 26px; font-weight: 500; }
+
+.auth-tabs { display: flex; background: var(--bg); border-radius: var(--r-sm); padding: 4px; margin-bottom: 22px; border: 1px solid var(--border); gap: 4px; }
+.auth-tab { flex: 1; padding: 10px 8px; border-radius: 10px; font-weight: 700; font-size: 14px; color: var(--text3); transition: all .2s; }
+.auth-tab.active { background: var(--navy); color: white; box-shadow: var(--shadow-md); }
+
+.form-group { margin-bottom: 16px; }
+.form-label { font-size: 11.5px; font-weight: 700; color: var(--text2); margin-bottom: 7px; display: block; letter-spacing: .5px; text-transform: uppercase; }
+.form-input {
+  width: 100%; padding: 13px 16px;
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: var(--r-sm); font-size: 14px; font-weight: 500;
+  color: var(--text); outline: none;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+.form-input::placeholder { color: var(--text3); font-weight: 400; }
+.form-input:focus { border-color: var(--blue); background: white; box-shadow: 0 0 0 3px rgba(35,84,230,.1); }
+textarea.form-input { resize: vertical; min-height: 80px; }
+select.form-input { appearance: none; cursor: pointer; }
+
+.btn-primary {
+  width: 100%; padding: 15px;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  color: white; border-radius: var(--r-sm);
+  font-weight: 700; font-size: 15px; font-family: var(--font-body);
+  letter-spacing: .2px;
+  transition: all .2s;
+  box-shadow: 0 4px 16px rgba(11,31,74,.3);
+}
+.btn-primary:hover  { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(11,31,74,.35); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+.auth-error { background: #fef2f2; border: 1.5px solid #fecaca; color: #b91c1c; border-radius: var(--r-xs); padding: 10px 14px; font-size: 13px; font-weight: 500; margin-bottom: 16px; display: none; animation: shake .35s ease; }
+.auth-error.show { display: block; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-4px)} 40%,80%{transform:translateX(4px)} }
+
+/* ═══════════════════════════════════════════
+   APP SHELL
+═══════════════════════════════════════════ */
+#app-screen { background: var(--bg); padding-bottom: var(--nav-h); }
+
+/* TOPBAR */
+.topbar {
+  background: rgba(255,255,255,.95);
+  padding: 12px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 50;
+  box-shadow: 0 1px 12px rgba(11,31,74,.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.topbar-left { display: flex; align-items: center; gap: 10px; }
+.topbar-logo-img { width: 32px; height: 32px; border-radius: 9px; object-fit: contain; background: var(--navy); padding: 4px; }
+.topbar-name { font-family: var(--font-display); font-weight: 700; font-size: 20px; color: var(--navy); letter-spacing: -.5px; }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.topbar-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--navy), var(--blue-soft));
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 13px; color: white; cursor: pointer;
+  border: 2px solid var(--blue-tint); overflow: hidden;
+  font-family: var(--font-body);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+.topbar-avatar:hover { box-shadow: 0 0 0 3px var(--blue-pale); transform: scale(1.05); }
+.topbar-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Notification bell */
+.topbar-notif {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--bg); border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text3); transition: all .2s; position: relative;
+}
+.topbar-notif:hover { background: var(--blue-pale); color: var(--blue); border-color: var(--blue-tint); }
+.topbar-notif svg { width: 17px; height: 17px; }
+.notif-badge {
+  position: absolute; top: -3px; right: -3px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--red); border: 2px solid white;
+  font-size: 8px; font-weight: 800; color: white;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* BOTTOM NAV */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: var(--nav-h);
+  background: rgba(255,255,255,.97);
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-around;
+  z-index: 100;
+  box-shadow: 0 -4px 20px rgba(11,31,74,.07);
+  padding: 0 8px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.nav-item {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 3px;
+  padding: 8px 16px; border-radius: var(--r-md);
+  color: var(--text3); font-size: 10px; font-weight: 700;
+  letter-spacing: .3px; text-transform: uppercase;
+  transition: all .2s; position: relative;
+  min-width: 64px;
+}
+.nav-item svg { width: 22px; height: 22px; stroke-width: 1.8; transition: all .25s; }
+.nav-item.active { color: var(--navy); }
+.nav-item.active svg { stroke: var(--blue); transform: scale(1.1); }
+.nav-active-pill {
+  position: absolute; bottom: 1px;
+  width: 18px; height: 3px; border-radius: 2px;
+  background: var(--blue); opacity: 0;
+  transition: opacity .2s, width .2s;
+}
+.nav-item.active .nav-active-pill { opacity: 1; width: 24px; }
+
+/* PAGES */
+.page { display: none; flex-direction: column; padding: 18px 16px; gap: 16px; }
+.page.active { display: flex; animation: pgIn .28s cubic-bezier(.22,1,.36,1); }
+@keyframes pgIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+/* ═══════════════════════════════════════════
+   CARDS & SECTIONS
+═══════════════════════════════════════════ */
+.card {
+  background: white; border-radius: var(--r-lg);
+  border: 1px solid var(--border); box-shadow: var(--shadow-sm);
+  padding: 20px; overflow: hidden;
+}
+.section-title { font-family: var(--font-display); font-size: 19px; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+.section-sub   { font-size: 13px; color: var(--text3); font-weight: 500; }
+.section-header { display: flex; align-items: center; justify-content: space-between; }
+
+/* ═══════════════════════════════════════════
+   HOMEPAGE DASHBOARD
+═══════════════════════════════════════════ */
+.hero-banner {
+  background: linear-gradient(135deg, #060f28 0%, var(--navy) 35%, var(--navy-mid) 65%, #2354e6 100%);
+  border-radius: var(--r-xl); padding: 26px 24px;
+  color: white; position: relative; overflow: hidden;
+  border: none; box-shadow: var(--shadow-xl);
+}
+.hero-banner::before {
+  content: '';
+  position: absolute; right: -60px; top: -60px;
+  width: 240px; height: 240px; border-radius: 50%;
+  background: rgba(255,255,255,.06); pointer-events: none;
+}
+.hero-banner::after {
+  content: '';
+  position: absolute; right: 40px; bottom: -40px;
+  width: 140px; height: 140px; border-radius: 50%;
+  background: rgba(59,106,255,.15); pointer-events: none;
+}
+.hero-greeting { font-family: var(--font-display); font-size: 24px; font-weight: 700; margin-bottom: 4px; line-height: 1.25; position: relative; z-index: 1; }
+.hero-sub { font-size: 14px; opacity: .7; margin-bottom: 20px; font-weight: 500; position: relative; z-index: 1; }
+.hero-chips { display: flex; gap: 8px; flex-wrap: wrap; position: relative; z-index: 1; }
+.streak-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,.13);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 30px; padding: 7px 14px;
+  font-size: 13px; font-weight: 700;
+  backdrop-filter: blur(6px);
+}
+.xp-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(245,166,35,.2);
+  border: 1px solid rgba(245,166,35,.3);
+  border-radius: 30px; padding: 7px 14px;
+  font-size: 13px; font-weight: 700;
+  backdrop-filter: blur(6px);
+}
+
+/* Quick-stats bar */
+.qstats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.qstat-card {
+  background: white; border: 1px solid var(--border);
+  border-radius: var(--r-md); padding: 16px 14px;
+  display: flex; flex-direction: column; gap: 4px;
+  box-shadow: var(--shadow-sm); position: relative; overflow: hidden;
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+.qstat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.qstat-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.qstat-card.c1::before { background: linear-gradient(90deg, var(--blue), var(--blue-soft)); }
+.qstat-card.c2::before { background: linear-gradient(90deg, var(--purple), #a855f7); }
+.qstat-card.c3::before { background: linear-gradient(90deg, var(--green), #34d399); }
+.qstat-card.c4::before { background: linear-gradient(90deg, var(--accent), #fb923c); }
+.qstat-icon { font-size: 20px; line-height: 1; }
+.qstat-val  { font-family: var(--font-display); font-size: 26px; font-weight: 800; color: var(--navy); line-height: 1; }
+.qstat-lbl  { font-size: 10.5px; color: var(--text3); font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+
+/* Week chart */
+.week-chart { display: flex; align-items: flex-end; gap: 5px; height: 76px; margin-top: 14px; }
+.wbar-wrap  { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+.wbar       { width: 100%; border-radius: 5px 5px 0 0; background: var(--blue-pale); min-height: 4px; transition: height .5s cubic-bezier(.4,0,.2,1); }
+.wbar.today { background: linear-gradient(180deg, var(--blue-soft) 0%, var(--blue) 100%); box-shadow: 0 2px 8px rgba(35,84,230,.3); }
+.wbar-day   { font-size: 10px; color: var(--text3); font-weight: 700; letter-spacing: .3px; }
+
+/* ── HUB TILES ── */
+.hub-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 12px; }
+.hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.hub-tile {
+  background: white; border: 1px solid var(--border);
+  border-radius: var(--r-md); padding: 18px 16px;
+  display: flex; flex-direction: column; gap: 7px;
+  box-shadow: var(--shadow-sm); cursor: pointer;
+  transition: all .2s; position: relative; overflow: hidden;
+  text-align: left;
+}
+.hub-tile:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--blue-tint); }
+.hub-tile:active { transform: translateY(0); box-shadow: var(--shadow-sm); }
+.hub-tile-icon {
+  width: 44px; height: 44px; border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; margin-bottom: 2px; transition: transform .2s;
+}
+.hub-tile:hover .hub-tile-icon { transform: scale(1.08); }
+.hub-tile-icon.t1 { background: var(--blue-pale); }
+.hub-tile-icon.t2 { background: #f3e8ff; }
+.hub-tile-icon.t3 { background: #ecfdf5; }
+.hub-tile-icon.t4 { background: #fffbeb; }
+.hub-tile-icon.t5 { background: #fef2f2; }
+.hub-tile-label { font-weight: 700; font-size: 14px; color: var(--navy); }
+.hub-tile-meta  { font-size: 12px; color: var(--text3); font-weight: 500; }
+.hub-tile-arrow {
+  position: absolute; top: 14px; right: 14px;
+  color: var(--border2); font-size: 18px;
+  transition: transform .2s, color .2s;
+}
+.hub-tile:hover .hub-tile-arrow { color: var(--blue); transform: translateX(2px); }
+
+/* ═══════════════════════════════════════════
+   FLASHCARDS PAGE
+═══════════════════════════════════════════ */
+.fc-toolbar { display: flex; align-items: center; justify-content: space-between; }
+.btn-icon {
+  width: 42px; height: 42px; border-radius: var(--r-sm);
+  background: var(--blue-pale); color: var(--blue);
+  border: 1.5px solid var(--blue-tint);
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.btn-icon:hover { background: var(--blue-tint); transform: scale(1.04); }
+.btn-icon svg { width: 18px; height: 18px; }
+
+.filter-pills { display: flex; gap: 7px; flex-wrap: wrap; }
+.pill {
+  padding: 7px 16px; border-radius: 30px;
+  font-size: 12px; font-weight: 700;
+  border: 1.5px solid var(--border); color: var(--text3);
+  transition: all .2s; cursor: pointer; background: white;
+  letter-spacing: .2px;
+}
+.pill.active { background: var(--navy); border-color: var(--navy); color: white; box-shadow: var(--shadow-sm); }
+.pill:hover:not(.active) { border-color: var(--navy); color: var(--navy); }
+
+.fc-list { display: flex; flex-direction: column; gap: 10px; }
+.fc-item {
+  background: white; border: 1px solid var(--border);
+  border-radius: var(--r-md); padding: 16px;
+  display: flex; align-items: flex-start; gap: 12px;
+  box-shadow: var(--shadow-sm); transition: all .2s;
+  animation: fadeSlideIn .25s ease both;
+}
+@keyframes fadeSlideIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+.fc-item:hover { box-shadow: var(--shadow-md); border-color: var(--blue-tint); }
+.fc-diff {
+  padding: 4px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 700; white-space: nowrap;
+  font-family: var(--font-body); letter-spacing: .2px; flex-shrink: 0;
+}
+.fc-diff.easy   { background: #d1fae5; color: #065f46; }
+.fc-diff.medium { background: #fef3c7; color: #92400e; }
+.fc-diff.hard   { background: #fee2e2; color: #991b1b; }
+.fc-content { flex: 1; min-width: 0; }
+.fc-q { font-weight: 700; font-size: 14px; color: var(--navy); margin-bottom: 5px; }
+.fc-a { font-size: 13px; color: var(--text2); font-weight: 500; line-height: 1.5; }
+.fc-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.fc-btn { width: 32px; height: 32px; border-radius: var(--r-xs); display: flex; align-items: center; justify-content: center; transition: all .15s; }
+.fc-btn.edit { background: var(--blue-pale); color: var(--blue); }
+.fc-btn.del  { background: #fee2e2; color: var(--red); }
+.fc-btn:hover { transform: scale(1.08); }
+.fc-btn svg  { width: 14px; height: 14px; }
+
+/* Flip card */
+.fc-flip-card { perspective: 1200px; height: 220px; cursor: pointer; }
+.fc-flip-inner { position: relative; width: 100%; height: 100%; transition: transform .65s cubic-bezier(.4,0,.2,1); transform-style: preserve-3d; }
+.fc-flip-card.flipped .fc-flip-inner { transform: rotateY(180deg); }
+.fc-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: var(--r-xl); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px; text-align: center; }
+.fc-front { background: linear-gradient(145deg, #060f28 0%, var(--navy) 45%, var(--navy-mid) 75%, var(--blue) 100%); color: white; box-shadow: var(--shadow-xl); }
+.fc-back  { background: white; border: 2px solid var(--blue-tint); color: var(--navy); transform: rotateY(180deg); box-shadow: var(--shadow-md); }
+.fc-face-label { font-size: 10px; font-weight: 700; opacity: .55; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1.2px; }
+.fc-face-text  { font-family: var(--font-display); font-size: 18px; font-weight: 600; line-height: 1.45; }
+.fc-flip-hint { text-align:center; font-size:12px; color:var(--text3); font-weight:600; display:flex; align-items:center; justify-content:center; gap:5px; }
+.fc-flip-hint svg { width:14px; height:14px; }
+.fc-nav-btns { display: flex; gap: 10px; }
+.btn-outline {
+  flex: 1; padding: 12px;
+  background: white; border: 1.5px solid var(--border);
+  border-radius: var(--r-sm); font-weight: 700; font-size: 14px; color: var(--text2);
+  transition: all .2s;
+}
+.btn-outline:hover { border-color: var(--navy); color: var(--navy); background: var(--blue-pale); }
+.study-counter { text-align: center; padding: 6px 0; font-size: 13px; font-weight: 700; color: var(--text3); }
+
+/* ═══════════════════════════════════════════
+   FOCUS TIMER
+═══════════════════════════════════════════ */
+.timer-hero {
+  background: linear-gradient(145deg, #060f28 0%, var(--navy) 40%, var(--navy-mid) 70%, var(--blue) 100%);
+  border-radius: var(--r-xl); padding: 30px 24px;
+  text-align: center; color: white;
+  border: none; box-shadow: var(--shadow-xl);
+  position: relative; overflow: hidden;
+}
+.timer-hero::before {
+  content: '';
+  position: absolute; width: 320px; height: 320px; border-radius: 50%;
+  background: rgba(59,106,255,.08);
+  top: -120px; right: -100px; pointer-events: none;
+}
+.timer-hero::after {
+  content: '';
+  position: absolute; width: 200px; height: 200px; border-radius: 50%;
+  background: rgba(255,255,255,.03);
+  bottom: -80px; left: -60px; pointer-events: none;
+}
+.timer-mode-tabs {
+  display: flex; background: rgba(255,255,255,.08);
+  border-radius: var(--r-sm); padding: 3px; margin-bottom: 20px; gap: 2px;
+  border: 1px solid rgba(255,255,255,.1); position: relative; z-index: 1;
+}
+.timer-mode-tab {
+  flex: 1; padding: 9px 6px; border-radius: 10px;
+  font-size: 12px; font-weight: 700; color: rgba(255,255,255,.5);
+  transition: all .2s; letter-spacing: .2px;
+}
+.timer-mode-tab.active { background: white; color: var(--navy); box-shadow: var(--shadow-sm); }
+
+.timer-setup { margin-bottom: 16px; position: relative; z-index: 1; }
+.timer-setup-label { font-size: 11px; color: rgba(255,255,255,.5); font-weight: 700; letter-spacing: .8px; text-transform: uppercase; margin-bottom: 10px; }
+.timer-dur-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 7px; margin-bottom: 10px; }
+.dur-btn {
+  padding: 10px 4px; border-radius: 10px;
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+  font-size: 13px; font-weight: 700; color: rgba(255,255,255,.65); transition: all .2s;
+}
+.dur-btn.active { background: rgba(255,255,255,.2); border-color: rgba(255,255,255,.35); color: white; }
+.dur-btn:hover:not(.active) { background: rgba(255,255,255,.12); }
+.custom-dur-row { display: flex; gap: 8px; align-items: center; }
+.custom-dur-input {
+  flex: 1; padding: 10px 14px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14);
+  border-radius: 10px; font-size: 14px; font-weight: 700;
+  color: white; outline: none; text-align: center;
+}
+.custom-dur-input::placeholder { color: rgba(255,255,255,.3); font-weight: 400; }
+.custom-dur-input:focus { border-color: rgba(255,255,255,.45); background: rgba(255,255,255,.14); }
+.custom-dur-label { font-size: 13px; color: rgba(255,255,255,.5); }
+.btn-set {
+  padding: 10px 16px; border-radius: 10px;
+  background: rgba(255,255,255,.13); border: 1px solid rgba(255,255,255,.18);
+  font-size: 12px; font-weight: 700; color: white; transition: all .2s;
+}
+.btn-set:hover { background: rgba(255,255,255,.22); }
+
+/* Timer ring */
+.timer-ring-wrap { position: relative; width: 160px; height: 160px; margin: 14px auto 8px; }
+.timer-ring-svg { transform: rotate(-90deg); }
+.timer-ring-track { fill: none; stroke: rgba(255,255,255,.08); stroke-width: 8; }
+.timer-ring-fill { fill: none; stroke: rgba(255,255,255,.65); stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset .8s linear; }
+.timer-display-center {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  text-align: center; z-index: 1;
+}
+.timer-display {
+  font-family: var(--font-display); font-size: 42px; font-weight: 700;
+  letter-spacing: -2px; line-height: 1; color: white;
+}
+.timer-phase-lbl { font-size: 10px; color: rgba(255,255,255,.5); font-weight: 700; letter-spacing: .8px; text-transform: uppercase; margin-top: 3px; }
+.timer-status { font-size: 13px; color: rgba(255,255,255,.6); font-weight: 600; margin-bottom: 20px; position: relative; z-index: 1; }
+.timer-btns { display: flex; justify-content: center; gap: 14px; position: relative; z-index: 1; }
+.t-btn {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; color: white; transition: all .2s;
+}
+.t-btn:hover { background: rgba(255,255,255,.18); }
+.t-btn.main {
+  width: 68px; height: 68px; font-size: 24px;
+  background: white; color: var(--navy); border: none;
+  box-shadow: 0 4px 20px rgba(0,0,0,.2);
+}
+.t-btn.main:hover { transform: scale(1.07); box-shadow: 0 6px 28px rgba(0,0,0,.25); }
+
+.session-log { display: flex; flex-direction: column; gap: 8px; max-height: 260px; overflow-y: auto; }
+.session-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px; background: var(--bg); border-radius: var(--r-sm);
+  border: 1px solid var(--border); font-size: 13px;
+  transition: border-color .2s;
+}
+.session-item:hover { border-color: var(--blue-tint); }
+.session-date { color: var(--text3); font-weight: 500; }
+.session-dur  { font-weight: 700; color: var(--navy); font-family: var(--font-display); }
+
+/* ═══════════════════════════════════════════
+   EXAM COUNTDOWN PAGE
+═══════════════════════════════════════════ */
+.exam-card {
+  background: white; border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 20px;
+  box-shadow: var(--shadow-sm); position: relative; overflow: hidden;
+  transition: box-shadow .2s;
+}
+.exam-card:hover { box-shadow: var(--shadow-md); }
+.exam-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--navy), var(--blue));
+}
+.exam-subject { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+.exam-meta    { font-size: 13px; color: var(--text3); font-weight: 500; margin-bottom: 14px; }
+.cd-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 12px; }
+.cd-unit {
+  background: var(--blue-pale); border: 1px solid var(--blue-tint);
+  border-radius: 12px; padding: 12px 6px; text-align: center;
+}
+.cd-val { font-family: var(--font-display); font-size: 24px; font-weight: 800; color: var(--navy); }
+.cd-lbl { font-size: 10px; color: var(--text3); font-weight: 700; letter-spacing: .5px; text-transform: uppercase; margin-top: 2px; }
+.urgency-bar  { height: 5px; background: var(--bg2); border-radius: 3px; overflow: hidden; margin-bottom: 12px; }
+.urgency-fill { height: 100%; border-radius: 3px; transition: width .4s ease; }
+.exams-list { display: flex; flex-direction: column; gap: 14px; }
+.btn-sm-del {
+  padding: 8px 14px; border-radius: var(--r-xs);
+  font-size: 12px; font-weight: 700;
+  background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; transition: all .2s;
+}
+.btn-sm-del:hover { background: var(--red); color: white; border-color: var(--red); }
+
+/* ═══════════════════════════════════════════
+   TIMETABLE PAGE
+═══════════════════════════════════════════ */
+.tt-day-group { margin-bottom: 20px; }
+.tt-day-label {
+  font-size: 11px; font-weight: 800; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 1px;
+  padding: 0 4px 8px; border-bottom: 2px solid var(--border); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+.tt-day-label.is-today { color: var(--blue); border-color: var(--blue-tint); }
+.tt-today-badge {
+  background: var(--blue); color: white; border-radius: 20px;
+  padding: 1px 7px; font-size: 9px; font-weight: 800; letter-spacing: .3px;
+}
+.tt-slot {
+  background: white; border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 13px 14px;
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 8px; box-shadow: var(--shadow-sm);
+  transition: all .2s;
+}
+.tt-slot:hover { box-shadow: var(--shadow-md); border-color: var(--border2); }
+.tt-dot  { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.tt-time { font-weight: 800; font-size: 13px; color: var(--blue); min-width: 48px; font-family: var(--font-body); }
+.tt-info { flex: 1; }
+.tt-subj { font-weight: 700; font-size: 14px; color: var(--navy); }
+.tt-note { font-size: 12px; color: var(--text3); margin-top: 2px; }
+.tt-del  { width: 28px; height: 28px; border-radius: 8px; background: #fee2e2; color: #991b1b; display: flex; align-items: center; justify-content: center; font-size: 15px; transition: all .15s; }
+.tt-del:hover { background: var(--red); color: white; transform: scale(1.08); }
+
+.color-swatches { display: flex; gap: 9px; flex-wrap: wrap; }
+.swatch { width: 30px; height: 30px; border-radius: 9px; cursor: pointer; border: 2.5px solid transparent; transition: all .2s; }
+.swatch.selected { border-color: var(--navy); transform: scale(1.18); box-shadow: var(--shadow-sm); }
+
+/* ═══════════════════════════════════════════
+   AI CHAT (UPGRADED)
+═══════════════════════════════════════════ */
+#page-chat { padding: 0; gap: 0; }
+
+/* ═══════════════════════════════════════════
+   ABOUT PAGE
+═══════════════════════════════════════════ */
+.about-hero {
+  background: linear-gradient(145deg, #060f28 0%, var(--navy) 40%, var(--navy-mid) 65%, #2354e6 100%);
+  border-radius: var(--r-xl); padding: 36px 24px 32px;
+  color: white; position: relative; overflow: hidden;
+  text-align: center; box-shadow: var(--shadow-xl);
+}
+.about-hero::before {
+  content: ''; position: absolute; width: 300px; height: 300px; border-radius: 50%;
+  background: rgba(59,106,255,.1); top: -100px; right: -80px; pointer-events: none;
+}
+.about-hero::after {
+  content: ''; position: absolute; width: 180px; height: 180px; border-radius: 50%;
+  background: rgba(255,255,255,.04); bottom: -60px; left: -40px; pointer-events: none;
+}
+.about-logo-circle {
+  width: 80px; height: 80px; border-radius: 22px;
+  background: white; margin: 0 auto 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 36px; font-weight: 800;
+  color: var(--navy); box-shadow: 0 8px 32px rgba(0,0,0,.25);
+  position: relative; z-index: 1;
+}
+.about-hero-name {
+  font-family: var(--font-display); font-size: 34px; font-weight: 800;
+  letter-spacing: -1.5px; margin-bottom: 8px; position: relative; z-index: 1;
+}
+.about-hero-tagline {
+  font-size: 15px; opacity: .75; font-weight: 500;
+  line-height: 1.5; position: relative; z-index: 1; max-width: 280px; margin: 0 auto 20px;
+}
+.about-hero-badges {
+  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+  position: relative; z-index: 1;
+}
+.about-badge {
+  background: rgba(255,255,255,.13); border: 1px solid rgba(255,255,255,.22);
+  border-radius: 30px; padding: 6px 14px;
+  font-size: 12px; font-weight: 700; backdrop-filter: blur(6px);
+}
+
+/* Mission card */
+.about-mission {
+  background: white; border-radius: var(--r-lg);
+  border: 1px solid var(--border); box-shadow: var(--shadow-sm);
+  padding: 22px 20px;
+}
+.about-section-label {
+  font-size: 10.5px; font-weight: 800; color: var(--blue);
+  letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 8px;
+}
+.about-mission-text {
+  font-family: var(--font-display); font-size: 18px; font-weight: 600;
+  color: var(--navy); line-height: 1.55;
+}
+
+/* Features grid */
+.about-features-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.about-feature-card {
+  background: white; border: 1px solid var(--border);
+  border-radius: var(--r-md); padding: 16px 14px;
+  box-shadow: var(--shadow-sm); text-align: center;
+  transition: all .2s;
+}
+.about-feature-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--blue-tint); }
+.about-feature-icon { font-size: 28px; margin-bottom: 8px; }
+.about-feature-name { font-weight: 700; font-size: 13px; color: var(--navy); margin-bottom: 3px; }
+.about-feature-desc { font-size: 11.5px; color: var(--text3); font-weight: 500; line-height: 1.4; }
+
+/* Socials */
+.about-social-card {
+  background: white; border: 1px solid var(--border);
+  border-radius: var(--r-lg); box-shadow: var(--shadow-sm); overflow: hidden;
+}
+.about-social-header {
+  padding: 18px 20px 14px; border-bottom: 1px solid var(--border);
+}
+.about-social-title {
+  font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--navy);
+}
+.about-social-sub { font-size: 12.5px; color: var(--text3); font-weight: 500; margin-top: 2px; }
+.social-link-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 15px 20px; border-bottom: 1px solid var(--border);
+  text-decoration: none; color: inherit;
+  transition: background .18s;
+  cursor: pointer;
+}
+.social-link-item:last-child { border-bottom: none; }
+.social-link-item:hover { background: var(--bg); }
+.social-icon-wrap {
+  width: 44px; height: 44px; border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 20px;
+}
+.soc-ig   { background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+.soc-fb   { background: #1877f2; }
+.soc-tt   { background: #010101; }
+.soc-yt   { background: #ff0000; }
+.soc-web  { background: linear-gradient(135deg, var(--navy), var(--blue)); }
+.soc-mail { background: linear-gradient(135deg, #10b981, #059669); }
+.social-info { flex: 1; min-width: 0; }
+.social-name { font-weight: 700; font-size: 14px; color: var(--navy); }
+.social-handle { font-size: 12px; color: var(--text3); font-weight: 500; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.social-arrow { color: var(--border2); font-size: 18px; transition: transform .2s, color .2s; }
+.social-link-item:hover .social-arrow { color: var(--blue); transform: translateX(3px); }
+
+/* Footer note */
+.about-footer-note {
+  text-align: center; padding: 8px 0 4px;
+  font-size: 12px; color: var(--text3); font-weight: 500;
+}
+.ai-header {
+  padding: 14px 18px 13px;
+  background: white; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: var(--shadow-sm); flex-shrink: 0;
+  position: sticky; top: 0; z-index: 10;
+}
+.ai-avatar-wrap { position: relative; }
+.ai-avatar {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--navy), var(--blue-soft));
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+  box-shadow: 0 2px 8px rgba(35,84,230,.3);
+}
+.ai-online-dot {
+  position: absolute; bottom: 1px; right: 1px;
+  width: 11px; height: 11px; border-radius: 50%;
+  background: var(--green); border: 2px solid white;
+}
+.ai-name { font-weight: 800; font-size: 15px; color: var(--navy); }
+.ai-status { font-size: 12px; color: var(--green); font-weight: 600; }
+.ai-clear { margin-left: auto; font-size: 12px; font-weight: 700; color: var(--text3); padding: 6px 12px; border-radius: var(--r-xs); background: var(--bg); border: 1px solid var(--border); transition: all .2s; }
+.ai-clear:hover { color: var(--red); border-color: #fecaca; background: #fee2e2; }
+
+.chat-msgs {
+  flex: 1; overflow-y: auto; padding: 16px 16px;
+  display: flex; flex-direction: column; gap: 12px;
+  background: var(--bg); min-height: 0;
+}
+.msg { display: flex; gap: 8px; animation: msgIn .3s cubic-bezier(.22,1,.36,1); }
+@keyframes msgIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.msg.user { justify-content: flex-end; }
+.msg-icon { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg,var(--navy),var(--blue)); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; margin-top: 2px; }
+.msg-bubble {
+  max-width: 80%; padding: 12px 16px; border-radius: 20px;
+  font-size: 14px; line-height: 1.65; word-wrap: break-word; font-weight: 500;
+}
+.msg.ai .msg-bubble { background: white; border: 1px solid var(--border); border-bottom-left-radius: 5px; color: var(--text); box-shadow: var(--shadow-sm); }
+.msg.user .msg-bubble { background: linear-gradient(135deg, var(--navy), var(--navy-mid)); border-bottom-right-radius: 5px; color: white; box-shadow: var(--shadow-md); }
+.msg-time { font-size: 10px; opacity: .5; margin-top: 4px; font-weight: 500; text-align: right; }
+
+.chat-input-wrap {
+  padding: 10px 14px 14px; background: white;
+  border-top: 1px solid var(--border); flex-shrink: 0;
+}
+.chat-suggestions { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+.chat-suggestions::-webkit-scrollbar { display: none; }
+.suggest-chip {
+  padding: 6px 13px; border-radius: 20px; white-space: nowrap;
+  background: var(--blue-pale); border: 1.5px solid var(--blue-tint);
+  font-size: 12px; font-weight: 700; color: var(--blue); cursor: pointer;
+  transition: all .2s;
+}
+.suggest-chip:hover { background: var(--blue-tint); transform: translateY(-1px); }
+.chat-row { display: flex; gap: 9px; align-items: flex-end; }
+.chat-textarea {
+  flex: 1; padding: 12px 16px;
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: var(--r-md); font-size: 14px; font-weight: 500;
+  color: var(--text); outline: none; resize: none;
+  min-height: 48px; max-height: 120px; line-height: 1.5;
+  transition: border-color .2s, background .2s;
+}
+.chat-textarea::placeholder { color: var(--text3); }
+.chat-textarea:focus { border-color: var(--blue); background: white; }
+.chat-send {
+  width: 48px; height: 48px; border-radius: var(--r-sm);
+  background: linear-gradient(135deg, var(--navy), var(--navy-mid)); display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-md); flex-shrink: 0; transition: all .2s;
+}
+.chat-send:hover { transform: scale(1.06); box-shadow: var(--shadow-lg); }
+.chat-send svg { width: 19px; height: 19px; color: white; stroke: white; }
+
+.typing-wrap { display: flex; gap: 4px; padding: 10px 14px; align-items: center; }
+.t-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text3); animation: tdot .9s infinite; }
+.t-dot:nth-child(2) { animation-delay: .2s; }
+.t-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes tdot { 0%,60%,100%{transform:translateY(0);opacity:.5} 30%{transform:translateY(-6px);opacity:1} }
+
+/* ═══════════════════════════════════════════
+   PROGRESS PAGE
+═══════════════════════════════════════════ */
+.progress-ring-wrap { position: relative; width: 150px; height: 150px; margin: 0 auto 18px; }
+.ring-svg   { transform: rotate(-90deg); }
+.ring-track { fill: none; stroke: var(--bg2); stroke-width: 12; }
+.ring-fill  { fill: none; stroke: url(#ringGrad); stroke-width: 12; stroke-linecap: round; transition: stroke-dashoffset 1s cubic-bezier(.4,0,.2,1); }
+
+.goal-row { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+.goal-row:last-child { border-bottom: none; }
+.goal-icon { width: 40px; height: 40px; border-radius: 12px; background: var(--blue-pale); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.goal-info { flex: 1; }
+.goal-name { font-size: 14px; font-weight: 700; color: var(--navy); }
+.goal-prog { font-size: 12px; color: var(--text3); margin-top: 2px; font-weight: 500; }
+.goal-bar-bg  { height: 5px; background: var(--bg2); border-radius: 3px; margin-top: 8px; overflow: hidden; }
+.goal-bar-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--blue-soft)); border-radius: 3px; transition: width .7s cubic-bezier(.4,0,.2,1); }
+.goal-pct { font-size: 13px; font-weight: 800; color: var(--blue); min-width: 36px; text-align: right; font-family: var(--font-display); }
+
+/* Achievements */
+.achievement-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.achievement-card {
+  background: white; border: 1.5px solid var(--border); border-radius: var(--r-md);
+  padding: 14px 12px; text-align: center;
+  transition: all .2s;
+}
+.achievement-card.unlocked { border-color: var(--accent); background: linear-gradient(135deg, #fffbf0, #fff8e1); }
+.achievement-card.unlocked:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.ach-icon { font-size: 28px; margin-bottom: 6px; line-height: 1; filter: grayscale(1) opacity(.4); }
+.achievement-card.unlocked .ach-icon { filter: none; }
+.ach-name { font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+.ach-desc { font-size: 11px; color: var(--text3); font-weight: 500; }
+.achievement-card.unlocked .ach-name { color: #92400e; }
+
+/* ═══════════════════════════════════════════
+   PROFILE
+═══════════════════════════════════════════ */
+.profile-hero {
+  background: linear-gradient(145deg, #060f28 0%, var(--navy) 40%, var(--navy-mid) 70%, #2354e6 100%);
+  border-radius: var(--r-xl); padding: 32px 24px;
+  text-align: center; color: white; border: none;
+  box-shadow: var(--shadow-xl);
+}
+.av-wrap { position: relative; display: inline-block; margin-bottom: 14px; }
+.av-big  {
+  width: 90px; height: 90px; border-radius: 50%;
+  background: rgba(255,255,255,.18); border: 3px solid rgba(255,255,255,.4);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 32px; font-weight: 700; color: white;
+  overflow: hidden; margin: 0 auto;
+}
+.av-big img { width: 100%; height: 100%; object-fit: cover; }
+.av-edit {
+  position: absolute; bottom: 0; right: 0;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: white; color: var(--blue);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; box-shadow: var(--shadow-md);
+  transition: transform .2s;
+}
+.av-edit:hover { transform: scale(1.1); }
+.profile-name  { font-family: var(--font-display); font-size: 22px; font-weight: 700; }
+.profile-email { font-size: 13px; opacity: .6; margin-top: 2px; font-weight: 500; }
+.profile-stats { display: flex; margin-top: 22px; }
+.p-stat { flex: 1; text-align: center; border-right: 1px solid rgba(255,255,255,.15); }
+.p-stat:last-child { border-right: none; }
+.p-stat-val { font-family: var(--font-display); font-size: 20px; font-weight: 700; }
+.p-stat-lbl { font-size: 10px; opacity: .5; margin-top: 3px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+
+.pfield { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border); }
+.pfield:last-child { border-bottom: none; }
+.pf-l { display: flex; align-items: center; gap: 12px; }
+.pf-icon { width: 38px; height: 38px; border-radius: 11px; background: var(--blue-pale); display: flex; align-items: center; justify-content: center; color: var(--blue); }
+.pf-icon svg { width: 17px; height: 17px; }
+.pf-lbl { font-size: 11px; color: var(--text3); font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+.pf-val { font-size: 14px; font-weight: 700; color: var(--navy); margin-top: 1px; }
+.btn-edit-sm { font-size: 12px; font-weight: 700; color: var(--blue); background: var(--blue-pale); padding: 7px 13px; border-radius: var(--r-xs); border: 1.5px solid var(--blue-tint); transition: all .2s; }
+.btn-edit-sm:hover { background: var(--blue-tint); }
+
+.btn-danger {
+  width: 100%; padding: 14px;
+  background: #fff5f5; color: var(--red);
+  border: 1.5px solid #fecaca; border-radius: var(--r-sm);
+  font-weight: 700; font-size: 14px; transition: all .2s;
+  font-family: var(--font-body);
+}
+.btn-danger:hover { background: var(--red); color: white; border-color: var(--red); }
+
+/* ═══════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(6,15,40,.5); backdrop-filter: blur(8px);
+  z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: white; border-radius: var(--r-xl);
+  padding: 28px; width: 100%; max-width: 420px;
+  box-shadow: var(--shadow-xl);
+  animation: slideUp .3s cubic-bezier(.22,1,.36,1);
+  max-height: 88vh; overflow-y: auto;
+  border: 1px solid rgba(255,255,255,.5);
+}
+.modal-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+.modal-title span { font-family: var(--font-display); font-size: 19px; font-weight: 700; color: var(--navy); }
+.modal-close { font-size: 22px; color: var(--text3); cursor: pointer; line-height: 1; width: 32px; height: 32px; border-radius: 50%; display:flex; align-items:center; justify-content:center; background: var(--bg); transition: all .2s; }
+.modal-close:hover { color: var(--navy); background: var(--bg2); }
+
+.diff-select { display: flex; gap: 8px; }
+.diff-btn {
+  flex: 1; padding: 10px; border-radius: 10px;
+  border: 1.5px solid var(--border); font-weight: 700; font-size: 13px; transition: all .2s;
+  font-family: var(--font-body);
+}
+.diff-btn.easy   { color: #065f46; }
+.diff-btn.medium { color: #92400e; }
+.diff-btn.hard   { color: #991b1b; }
+.diff-btn.easy.active   { background: #d1fae5; border-color: #6ee7b7; }
+.diff-btn.medium.active { background: #fef3c7; border-color: #fcd34d; }
+.diff-btn.hard.active   { background: #fee2e2; border-color: #fca5a5; }
+
+/* ═══════════════════════════════════════════
+   EMPTY STATE
+═══════════════════════════════════════════ */
+.empty { text-align: center; padding: 40px 20px; }
+.empty-ico  { font-size: 48px; margin-bottom: 12px; }
+.empty-ttl  { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+.empty-sub  { font-size: 13px; color: var(--text3); font-weight: 500; line-height: 1.55; }
+
+/* ═══════════════════════════════════════════
+   SPINNER & TOAST
+═══════════════════════════════════════════ */
+.spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: spin .6s linear infinite; }
+#toast-container { position: fixed; top: 80px; right: 14px; z-index: 999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; max-width: 280px; }
+.toast {
+  background: var(--navy); color: white;
+  padding: 12px 18px; border-radius: var(--r-sm); font-size: 13px; font-weight: 600;
+  box-shadow: var(--shadow-lg); min-width: 200px;
+  animation: toastIn .3s cubic-bezier(.22,1,.36,1), toastOut .3s ease 2.7s forwards;
+  display: flex; align-items: center; gap: 8px;
+}
+.toast.success { background: #064e3b; border: 1px solid #6ee7b7; }
+.toast.error   { background: #7f1d1d; border: 1px solid #fca5a5; }
+@keyframes toastIn  { from { opacity:0; transform:translateX(40px) scale(.95); } to { opacity:1; transform:translateX(0) scale(1); } }
+@keyframes toastOut { to   { opacity:0; transform:translateX(40px) scale(.95); } }
+
+/* ═══════════════════════════════════════════
+   EBOOK LIBRARY
+═══════════════════════════════════════════ */
+.lib-hero {
+  background: linear-gradient(135deg, #060f28 0%, var(--navy) 40%, var(--navy-mid) 65%, var(--blue) 100%);
+  border-radius: var(--r-xl); padding: 24px 22px; color: white;
+  border: none; box-shadow: var(--shadow-xl); position: relative; overflow: hidden;
+}
+.lib-hero::before { content:''; position:absolute; right:-50px; top:-50px; width:220px; height:220px; border-radius:50%; background:rgba(255,255,255,.05); pointer-events:none; }
+.lib-hero::after  { content:''; position:absolute; left:-30px; bottom:-40px; width:160px; height:160px; border-radius:50%; background:rgba(59,106,255,.1); pointer-events:none; }
+.lib-hero-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; margin-bottom: 4px; position:relative; }
+.lib-hero-sub   { font-size: 13px; opacity: .7; font-weight: 500; line-height:1.55; position:relative; }
+.lib-stats { display: flex; gap: 0; margin-top: 20px; background:rgba(255,255,255,.1); border-radius: var(--r-md); padding: 14px 0; position:relative; backdrop-filter:blur(8px); }
+.lib-stat  { flex:1; text-align: center; border-right: 1px solid rgba(255,255,255,.15); }
+.lib-stat:last-child { border-right: none; }
+.lib-stat-val { font-family: var(--font-display); font-size: 22px; font-weight: 800; line-height:1; }
+.lib-stat-lbl { font-size: 10px; opacity: .6; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-top: 4px; }
+
+.ebook-card {
+  background: white; border: 1px solid var(--border);
+  border-radius: var(--r-lg); overflow: hidden;
+  box-shadow: var(--shadow-sm); transition: all .25s;
+  display: flex; flex-direction: row; min-height: 155px;
+}
+.ebook-card:hover { box-shadow: var(--shadow-md); border-color: var(--border2); transform: translateY(-2px); }
+.ebook-card:active { transform: scale(.99); }
+
+.ebook-spine {
+  width: 88px; flex-shrink: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  padding: 16px 8px; gap: 10px;
+}
+.ebook-spine-icon { font-size: 34px; position:relative; z-index:1; }
+.ebook-spine-num {
+  position:relative; z-index:1;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: rgba(255,255,255,.2); border: 1.5px solid rgba(255,255,255,.35);
+  display:flex; align-items:center; justify-content:center;
+  font-size: 11px; font-weight: 800; color: white;
+}
+.ebook-content { flex:1; padding: 14px 16px; display:flex; flex-direction:column; min-width:0; }
+.ebook-meta    { font-size: 10px; color: var(--text3); font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 5px; }
+.ebook-title   { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--navy); line-height: 1.35; margin-bottom: 6px; }
+.ebook-desc-short { font-size: 12px; color: var(--text2); line-height: 1.55; flex:1; margin-bottom: 10px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ebook-badge-row { display:flex; gap: 5px; flex-wrap:wrap; margin-bottom: 10px; }
+.ebook-badge-pill {
+  padding: 3px 8px; border-radius: 20px;
+  font-size: 10px; font-weight: 800; letter-spacing: .3px;
+}
+.ebook-btn-row { display: flex; gap: 8px; margin-top: auto; }
+.btn-read {
+  flex: 1; padding: 9px 10px; border-radius: var(--r-xs);
+  background: linear-gradient(135deg, var(--navy), var(--navy-mid)); color: white;
+  font-weight: 700; font-size: 12px; font-family: var(--font-body);
+  border: none; transition: all .2s;
+}
+.btn-read:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+.btn-read:active { transform: none; }
+.btn-dl {
+  width: 36px; height: 36px; border-radius: var(--r-xs); flex-shrink:0;
+  background: var(--blue-pale); color: var(--blue);
+  border: 1.5px solid var(--blue-tint);
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.btn-dl:hover { background: var(--blue-tint); }
+.btn-dl svg { width: 15px; height: 15px; }
+
+/* PDF Viewer Modal */
+.pdf-modal-overlay {
+  position: fixed; inset: 0; background: rgba(6,15,40,.7);
+  backdrop-filter: blur(8px); z-index: 300;
+  display: none; flex-direction: column;
+}
+.pdf-modal-overlay.open { display: flex; }
+.pdf-modal-header {
+  background: var(--navy); padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+}
+.pdf-modal-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; color: white; flex: 1;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.pdf-modal-close {
+  width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.12);
+  color: white; font-size: 18px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; border: none; flex-shrink:0; transition: all .2s;
+}
+.pdf-modal-close:hover { background: rgba(255,255,255,.22); }
+.pdf-modal-dl {
+  padding: 7px 13px; border-radius: var(--r-xs); flex-shrink:0;
+  background: var(--accent); color: white; font-weight: 700; font-size: 12px;
+  border: none; cursor: pointer; font-family: var(--font-body); transition: all .2s;
+}
+.pdf-modal-dl:hover { background: #e09820; }
+.pdf-frame { flex: 1; border: none; width: 100%; background: #525659; }
+
+/* Share Banner */
+.share-banner {
+  background: linear-gradient(135deg, #3b0764 0%, #5b21b6 40%, #4f46e5 75%, #2354e6 100%);
+  border-radius: var(--r-xl); padding: 24px 20px;
+  color: white; border: none; box-shadow: var(--shadow-xl);
+  position: relative; overflow: hidden;
+}
+.share-banner::before { content:''; position:absolute; right:-30px; top:-30px; width:160px; height:160px; border-radius:50%; background:rgba(255,255,255,.06); pointer-events:none; }
+.share-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; margin-bottom: 5px; position:relative; }
+.share-sub   { font-size: 13px; opacity: .7; font-weight: 500; margin-bottom: 20px; position:relative; }
+.share-circle-btns {
+  display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-top: 4px;
+}
+.share-circle-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  cursor: pointer;
+}
+.share-circle {
+  width: 58px; height: 58px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .2s, box-shadow .2s;
+  box-shadow: 0 4px 16px rgba(0,0,0,.25);
+}
+.share-circle:hover { transform: translateY(-4px) scale(1.08); box-shadow: 0 8px 24px rgba(0,0,0,.32); }
+.share-circle-lbl { font-size: 11px; font-weight: 700; color: rgba(255,255,255,.8); text-align: center; }
+.whatsapp-circle  { background: #25d366; }
+.twitter-circle   { background: #000; }
+.instagram-circle { background: radial-gradient(circle at 30% 110%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285aeb 90%); }
+.copy-circle      { background: rgba(255,255,255,.22); border: 1.5px solid rgba(255,255,255,.3); }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (min-width: 600px) {
+  .qstats { grid-template-columns: repeat(4,1fr); }
+  .hub-grid { grid-template-columns: repeat(4,1fr); }
+  .page { padding: 20px 24px; }
+}
+@media (max-width: 380px) {
+  .timer-display { font-size: 36px; }
+  .auth-card { padding: 28px 18px; }
+  .hub-grid { gap: 8px; }
+  .qstats { gap: 8px; }
+}
+
+/* ═══════════════════════════════════════════
+   LEVEL & XP BADGE
+═══════════════════════════════════════════ */
+.level-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: linear-gradient(135deg, var(--accent), #fb923c);
+  border-radius: 30px; padding: 5px 12px;
+  font-size: 12px; font-weight: 800; color: white;
+  box-shadow: 0 2px 8px rgba(245,166,35,.4);
+}
+
+/* ═══════════════════════════════════════════
+   AI CHAT WELCOME CARD
+═══════════════════════════════════════════ */
+.chat-welcome {
+  background: linear-gradient(135deg, var(--blue-pale), white);
+  border: 1.5px solid var(--blue-tint);
+  border-radius: var(--r-lg); padding: 20px;
+  text-align: center; margin: 0 0 4px;
+}
+.chat-welcome-icon { font-size: 36px; margin-bottom: 8px; }
+.chat-welcome-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 5px; }
+.chat-welcome-sub { font-size: 13px; color: var(--text3); font-weight: 500; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="loading-logo-wrap">
+    <img class="loading-logo-img" src="logo.jpg" alt="Z" onerror="this.style.display='none'"/>
+    <div class="loading-logo-text">Zenova</div>
+  </div>
+  <div class="loading-tagline">Study Smarter Every Day</div>
+  <div class="loading-ring"></div>
+</div>
+
+<!-- TOAST -->
+<div id="toast-container"></div>
+
+<!-- ════════════════════════════════════════
+     AUTH
+════════════════════════════════════════ -->
+<div id="auth-screen" class="screen">
+  <div class="auth-blob b1"></div>
+  <div class="auth-blob b2"></div>
+  <div class="auth-blob b3"></div>
+  <div class="auth-card">
+    <div class="auth-logo">
+      <img class="auth-logo-img" src="logo.jpg" alt="Z" onerror="this.style.display='none'"/>
+      <span class="auth-logo-name">Zenova</span>
+    </div>
+    <p class="auth-headline">Study Smarter Every Day</p>
+    <p class="auth-sub">Your AI-powered JAMB study companion</p>
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('login')">Log In</button>
+      <button class="auth-tab"        onclick="switchTab('signup')">Sign Up</button>
+    </div>
+    <div id="auth-error" class="auth-error"></div>
+    <div id="login-form">
+      <div class="form-group"><label class="form-label">Email</label><input id="login-email" type="email" class="form-input" placeholder="you@example.com" autocomplete="email"/></div>
+      <div class="form-group"><label class="form-label">Password</label><input id="login-pass" type="password" class="form-input" placeholder="••••••••" autocomplete="current-password"/></div>
+      <button class="btn-primary" onclick="doLogin()" id="btn-login">Log In</button>
+    </div>
+    <div id="signup-form" style="display:none">
+      <div class="form-group"><label class="form-label">Full Name</label><input id="signup-name" type="text" class="form-input" placeholder="Jane Smith" autocomplete="name"/></div>
+      <div class="form-group"><label class="form-label">Email</label><input id="signup-email" type="email" class="form-input" placeholder="you@example.com" autocomplete="email"/></div>
+      <div class="form-group"><label class="form-label">Password</label><input id="signup-pass" type="password" class="form-input" placeholder="Min. 6 characters" autocomplete="new-password"/></div>
+      <button class="btn-primary" onclick="doSignup()" id="btn-signup">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     APP
+════════════════════════════════════════ -->
+<div id="app-screen" class="screen">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <img class="topbar-logo-img" src="logo.jpg" alt="Z" onerror="this.style.display='none'"/>
+      <span class="topbar-name">Zenova</span>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-notif" onclick="showPage('chat')" title="About Zenova">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </button>
+      <div class="topbar-avatar" id="topbar-avatar" onclick="showPage('profile')">?</div>
+    </div>
+  </div>
+
+  <!-- ══ HOME / DASHBOARD ══ -->
+  <div id="page-dashboard" class="page active">
+
+    <div class="card hero-banner">
+      <div class="hero-greeting" id="greeting-name">Good morning! 👋</div>
+      <div class="hero-sub" id="hero-sub-text">Ready to crush today's goals?</div>
+      <div class="hero-chips">
+        <div class="streak-chip">🔥&nbsp;<span id="streak-text">0 day streak</span></div>
+        <div class="xp-chip">⭐&nbsp;<span id="xp-text">0 XP</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-header">
+        <div><div class="section-title">This Week</div><div class="section-sub">Daily study activity</div></div>
+        <div style="font-size:12px;font-weight:700;color:var(--text3)" id="week-total-label">0 min total</div>
+      </div>
+      <div class="week-chart" id="week-chart"></div>
+    </div>
+
+    <div class="qstats">
+      <div class="qstat-card c1"><div class="qstat-icon">⏱️</div><div class="qstat-val" id="stat-hours">0h</div><div class="qstat-lbl">Study Time</div></div>
+      <div class="qstat-card c2"><div class="qstat-icon">🃏</div><div class="qstat-val" id="stat-cards">0</div><div class="qstat-lbl">Flashcards</div></div>
+      <div class="qstat-card c3"><div class="qstat-icon">✅</div><div class="qstat-val" id="stat-sessions">0</div><div class="qstat-lbl">Sessions</div></div>
+      <div class="qstat-card c4"><div class="qstat-icon">🔥</div><div class="qstat-val" id="stat-streak">0</div><div class="qstat-lbl">Streak</div></div>
+    </div>
+
+    <div>
+      <div class="hub-title">Quick Access</div>
+      <div class="hub-grid">
+        <button class="hub-tile" onclick="showPage('flashcards')">
+          <div class="hub-tile-icon t1">🃏</div>
+          <div class="hub-tile-label">Flashcards</div>
+          <div class="hub-tile-meta" id="hub-cards-meta">0 cards</div>
+          <span class="hub-tile-arrow">›</span>
+        </button>
+        <button class="hub-tile" onclick="showPage('study')">
+          <div class="hub-tile-icon t2">⏱️</div>
+          <div class="hub-tile-label">Focus Timer</div>
+          <div class="hub-tile-meta" id="hub-timer-meta">Start studying</div>
+          <span class="hub-tile-arrow">›</span>
+        </button>
+        <button class="hub-tile" onclick="showPage('exams')">
+          <div class="hub-tile-icon t3">📝</div>
+          <div class="hub-tile-label">Exam Countdown</div>
+          <div class="hub-tile-meta" id="hub-exams-meta">0 exams</div>
+          <span class="hub-tile-arrow">›</span>
+        </button>
+        <button class="hub-tile" onclick="showPage('timetable')">
+          <div class="hub-tile-icon t4">📅</div>
+          <div class="hub-tile-label">Schedule</div>
+          <div class="hub-tile-meta" id="hub-tt-meta">View timetable</div>
+          <span class="hub-tile-arrow">›</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="card" id="dash-exams-card" style="display:none">
+      <div class="section-title" style="margin-bottom:12px">⚡ Upcoming Exams</div>
+      <div id="dash-exams-list"></div>
+    </div>
+
+    <div class="card" id="dash-tt-card" style="display:none">
+      <div class="section-title" style="margin-bottom:12px">📅 Today's Schedule</div>
+      <div id="dash-tt-list"></div>
+    </div>
+
+    <div style="height:4px"></div>
+  </div><!-- /dashboard -->
+
+  <!-- ══ FLASHCARDS ══ -->
+  <div id="page-flashcards" class="page">
+    <div id="fc-list-view">
+      <div class="fc-toolbar">
+        <div><div class="section-title">Flashcards</div><div class="section-sub" id="fc-count-label">0 cards</div></div>
+        <button class="btn-icon" onclick="openAddCard()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+      </div>
+      <div class="filter-pills">
+        <button class="pill active" onclick="filterCards('all',this)">All</button>
+        <button class="pill"        onclick="filterCards('easy',this)">Easy</button>
+        <button class="pill"        onclick="filterCards('medium',this)">Medium</button>
+        <button class="pill"        onclick="filterCards('hard',this)">Hard</button>
+      </div>
+      <div id="fc-list" class="fc-list"><div class="empty"><div class="empty-ico">🃏</div><div class="empty-ttl">No flashcards yet</div><div class="empty-sub">Tap + to create your first card</div></div></div>
+      <button class="btn-primary" onclick="startStudy()" id="btn-study" style="display:none;margin-top:8px">▶&nbsp; Study Now</button>
+    </div>
+    <div id="fc-study-view" style="display:none">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <button class="btn-icon" onclick="exitStudy()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
+        <div><div class="section-title">Study Mode</div><div class="section-sub" id="study-progress">Card 1 of 0</div></div>
+      </div>
+      <div class="fc-flip-card" id="flip-card" onclick="flipCard()">
+        <div class="fc-flip-inner">
+          <div class="fc-face fc-front"><div class="fc-face-label">Question</div><div class="fc-face-text" id="study-question">—</div></div>
+          <div class="fc-face fc-back"><div class="fc-face-label">Answer</div><div class="fc-face-text" id="study-answer">—</div></div>
+        </div>
+      </div>
+      <div class="fc-flip-hint">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14l-4-4 4-4"/><path d="M5 10h11a4 4 0 0 1 0 8h-1"/></svg>
+        Tap card to flip
+      </div>
+      <div class="study-counter" id="study-progress-bar"></div>
+      <div class="fc-nav-btns">
+        <button class="btn-outline" onclick="prevCard()">← Prev</button>
+        <button class="btn-outline" onclick="nextCard()">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ FOCUS TIMER ══ -->
+  <div id="page-study" class="page">
+    <div class="card timer-hero">
+      <div class="timer-mode-tabs">
+        <button class="timer-mode-tab active" onclick="setTimerMode('countdown',this)">Countdown</button>
+        <button class="timer-mode-tab"        onclick="setTimerMode('stopwatch',this)">Stopwatch</button>
+        <button class="timer-mode-tab"        onclick="setTimerMode('pomodoro',this)">Pomodoro 🍅</button>
+      </div>
+      <div id="timer-setup-panel" class="timer-setup">
+        <div class="timer-setup-label">Set Duration</div>
+        <div class="timer-dur-grid">
+          <button class="dur-btn" onclick="setDuration(30,this)">30m</button>
+          <button class="dur-btn" onclick="setDuration(60,this)">1h</button>
+          <button class="dur-btn" onclick="setDuration(90,this)">1.5h</button>
+          <button class="dur-btn" onclick="setDuration(120,this)">2h</button>
+        </div>
+        <div class="custom-dur-row">
+          <input id="custom-dur" type="number" class="custom-dur-input" placeholder="Custom" min="1" max="480"/>
+          <span class="custom-dur-label">min</span>
+          <button class="btn-set" onclick="applyCustomDuration()">Set</button>
+        </div>
+      </div>
+      <!-- Ring timer display -->
+      <div class="timer-ring-wrap">
+        <svg class="timer-ring-svg" width="160" height="160" viewBox="0 0 160 160">
+          <circle class="timer-ring-track" cx="80" cy="80" r="68"/>
+          <circle class="timer-ring-fill" id="timer-ring-fill" cx="80" cy="80" r="68" stroke-dasharray="427.3" stroke-dashoffset="427.3"/>
+        </svg>
+        <div class="timer-display-center">
+          <div class="timer-display" id="timer-display">00:00</div>
+          <div class="timer-phase-lbl" id="timer-phase-lbl">READY</div>
+        </div>
+      </div>
+      <div class="timer-status" id="timer-status">Select a duration above to begin</div>
+      <div class="timer-btns">
+        <button class="t-btn" onclick="resetTimer()" title="Reset">↺</button>
+        <button class="t-btn main" onclick="toggleTimer()" id="timer-toggle-btn">▶</button>
+        <button class="t-btn" onclick="lapTimer(false)" title="Save Session">💾</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-header" style="margin-bottom:14px">
+        <div class="section-title">Session Log</div>
+        <div style="font-size:12px;font-weight:700;color:var(--text3)" id="sessions-total-label"></div>
+      </div>
+      <div id="session-log" class="session-log"><div class="empty" style="padding:16px"><div class="empty-ico">📋</div><div class="empty-ttl">No sessions yet</div><div class="empty-sub">Save a session to see it here</div></div></div>
+    </div>
+  </div>
+
+  <!-- ══ EXAM COUNTDOWN ══ -->
+  <div id="page-exams" class="page">
+    <div class="fc-toolbar">
+      <div><div class="section-title">Exam Countdown</div><div class="section-sub" id="exams-count-label">0 exams</div></div>
+      <button class="btn-icon" onclick="openAddExam()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+    </div>
+    <div id="exams-list" class="exams-list"><div class="empty"><div class="empty-ico">📝</div><div class="empty-ttl">No exams added yet</div><div class="empty-sub">Tap + to add your first exam</div></div></div>
+  </div>
+
+  <!-- ══ TIMETABLE ══ -->
+  <div id="page-timetable" class="page">
+    <div class="fc-toolbar">
+      <div><div class="section-title">My Timetable</div><div class="section-sub">Weekly schedule</div></div>
+      <button class="btn-icon" onclick="openAddSlot()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+    </div>
+    <div id="timetable-container"></div>
+  </div>
+
+  <!-- ══ PROGRESS ══ -->
+  <div id="page-progress" class="page">
+    <div class="card" style="text-align:center">
+      <div class="section-title" style="margin-bottom:4px">Weekly Goal</div>
+      <div class="section-sub" style="margin-bottom:20px">Target: 10 hours / week</div>
+      <div class="progress-ring-wrap">
+        <svg class="ring-svg" width="150" height="150" viewBox="0 0 150 150">
+          <defs><linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:var(--blue)"/><stop offset="100%" style="stop-color:var(--blue-soft)"/></linearGradient></defs>
+          <circle class="ring-track" cx="75" cy="75" r="62"/>
+          <circle class="ring-fill" cx="75" cy="75" r="62" id="progress-ring" stroke-dasharray="389.6" stroke-dashoffset="389.6"/>
+        </svg>
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center">
+          <div style="font-family:var(--font-display);font-size:28px;font-weight:800;color:var(--navy)" id="ring-pct">0%</div>
+          <div style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.4px">complete</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title" style="margin-bottom:16px">Goals Tracker</div>
+      <div class="goal-row"><div class="goal-icon">⏱</div><div class="goal-info"><div class="goal-name">Study Hours</div><div class="goal-prog"><span id="goal-hours-done">0</span> / 10 hrs</div><div class="goal-bar-bg"><div class="goal-bar-fill" id="goal-bar-hours" style="width:0%"></div></div></div><div class="goal-pct" id="goal-pct-hours">0%</div></div>
+      <div class="goal-row"><div class="goal-icon">🃏</div><div class="goal-info"><div class="goal-name">Flashcards Created</div><div class="goal-prog"><span id="goal-cards-done">0</span> / 20 cards</div><div class="goal-bar-bg"><div class="goal-bar-fill" id="goal-bar-cards" style="width:0%"></div></div></div><div class="goal-pct" id="goal-pct-cards">0%</div></div>
+      <div class="goal-row"><div class="goal-icon">🔥</div><div class="goal-info"><div class="goal-name">Study Streak</div><div class="goal-prog"><span id="goal-streak-done">0</span> / 7 days</div><div class="goal-bar-bg"><div class="goal-bar-fill" id="goal-bar-streak" style="width:0%"></div></div></div><div class="goal-pct" id="goal-pct-streak">0%</div></div>
+      <div class="goal-row"><div class="goal-icon">📅</div><div class="goal-info"><div class="goal-name">Sessions Completed</div><div class="goal-prog"><span id="goal-sess-done">0</span> / 14 sessions</div><div class="goal-bar-bg"><div class="goal-bar-fill" id="goal-bar-sess" style="width:0%"></div></div></div><div class="goal-pct" id="goal-pct-sess">0%</div></div>
+    </div>
+    <!-- Achievements -->
+    <div class="card">
+      <div class="section-title" style="margin-bottom:14px">🏆 Achievements</div>
+      <div class="achievement-grid" id="achievements-grid"></div>
+    </div>
+  </div>
+
+  <!-- ══ PROFILE ══ -->
+  <div id="page-profile" class="page">
+    <div class="card profile-hero">
+      <div class="av-wrap">
+        <div class="av-big" id="profile-avatar-big">?</div>
+        <button class="av-edit" onclick="triggerAvatarUpload()">✏</button>
+      </div>
+      <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)"/>
+      <div class="profile-name" id="profile-name-display">Loading…</div>
+      <div class="profile-email" id="profile-email-display"></div>
+      <div style="margin-top:10px"><span id="profile-level-badge" class="level-badge">⭐ Level 1</span></div>
+      <div class="profile-stats">
+        <div class="p-stat"><div class="p-stat-val" id="ps-hours">0h</div><div class="p-stat-lbl">Hours</div></div>
+        <div class="p-stat"><div class="p-stat-val" id="ps-cards">0</div><div class="p-stat-lbl">Cards</div></div>
+        <div class="p-stat"><div class="p-stat-val" id="ps-streak">🔥0</div><div class="p-stat-lbl">Streak</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title" style="margin-bottom:16px">Account</div>
+      <div class="pfield"><div class="pf-l"><div class="pf-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div><div class="pf-lbl">Display Name</div><div class="pf-val" id="pf-name">—</div></div></div><button class="btn-edit-sm" onclick="editName()">Edit</button></div>
+      <div class="pfield"><div class="pf-l"><div class="pf-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><div><div class="pf-lbl">Email</div><div class="pf-val" id="pf-email">—</div></div></div></div>
+      <div class="pfield"><div class="pf-l"><div class="pf-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div><div class="pf-lbl">Password</div><div class="pf-val">••••••••</div></div></div><button class="btn-edit-sm" onclick="openModal('modal-password')">Change</button></div>
+    </div>
+    <button class="btn-danger" onclick="doLogout()">Sign Out</button>
+    <div style="height:8px"></div>
+  </div>
+
+  <!-- ══ ABOUT ══ -->
+  <div id="page-chat" class="page" style="padding:16px;gap:16px">
+
+    <!-- Hero -->
+    <div class="about-hero">
+      <div class="about-logo-circle"><img src="logo.jpg" alt="Zenova" style="width:64px;height:64px;border-radius:16px;object-fit:contain;" onerror="this.style.display='none';this.parentElement.textContent='Z'"/></div>
+      <div class="about-hero-name">Zenova</div>
+      <div class="about-hero-tagline">The ultimate study companion for Nigerian students. Study smarter, not harder.</div>
+      <div class="about-hero-badges">
+        <span class="about-badge">🇳🇬 Made for Nigeria</span>
+        <span class="about-badge">📚 JAMB Ready</span>
+        <span class="about-badge">🆓 Always Free</span>
+      </div>
+    </div>
+
+    <!-- Mission -->
+    <div class="about-mission">
+      <div class="about-section-label">Our Mission</div>
+      <div class="about-mission-text">"Empowering every Nigerian student with the tools, resources, and mindset to excel — from JAMB to beyond."</div>
+    </div>
+
+    <!-- Features -->
+    <div>
+      <div style="font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--navy);margin-bottom:12px">What Zenova Offers</div>
+      <div class="about-features-grid">
+        <div class="about-feature-card">
+          <div class="about-feature-icon">🃏</div>
+          <div class="about-feature-name">Flashcards</div>
+          <div class="about-feature-desc">Create & study your own revision cards</div>
+        </div>
+        <div class="about-feature-card">
+          <div class="about-feature-icon">⏱️</div>
+          <div class="about-feature-name">Focus Timer</div>
+          <div class="about-feature-desc">Pomodoro & countdown timers to stay locked in</div>
+        </div>
+        <div class="about-feature-card">
+          <div class="about-feature-icon">📚</div>
+          <div class="about-feature-name">Free eBooks</div>
+          <div class="about-feature-desc">Curated PDFs crafted for JAMB prep</div>
+        </div>
+        <div class="about-feature-card">
+          <div class="about-feature-icon">📝</div>
+          <div class="about-feature-name">Exam Countdown</div>
+          <div class="about-feature-desc">Never miss an exam date again</div>
+        </div>
+        <div class="about-feature-card">
+          <div class="about-feature-icon">📅</div>
+          <div class="about-feature-name">Timetable</div>
+          <div class="about-feature-desc">Plan and organize your weekly study schedule</div>
+        </div>
+        <div class="about-feature-card">
+          <div class="about-feature-icon">🏆</div>
+          <div class="about-feature-name">XP & Streaks</div>
+          <div class="about-feature-desc">Stay motivated with rewards and achievements</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Social Media -->
+    <div class="about-social-card">
+      <div class="about-social-header">
+        <div class="about-social-title">📲 Connect with Zenova</div>
+        <div class="about-social-sub">Follow us for tips, updates & study motivation</div>
+      </div>
+      <a class="social-link-item" href="https://instagram.com/zenovaofficial188" target="_blank">
+        <div class="social-icon-wrap soc-ig">
+          <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </div>
+        <div class="social-info">
+          <div class="social-name">Instagram</div>
+          <div class="social-handle">@zenovaofficial188</div>
+        </div>
+        <span class="social-arrow">›</span>
+      </a>
+      <a class="social-link-item" href="https://facebook.com/profile.php?id=61588573439813" target="_blank">
+        <div class="social-icon-wrap soc-fb">
+          <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </div>
+        <div class="social-info">
+          <div class="social-name">Facebook</div>
+          <div class="social-handle">Zenova Official</div>
+        </div>
+        <span class="social-arrow">›</span>
+      </a>
+      <a class="social-link-item" href="https://tiktok.com/@zenovaofficial188" target="_blank">
+        <div class="social-icon-wrap soc-tt">
+          <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg>
+        </div>
+        <div class="social-info">
+          <div class="social-name">TikTok</div>
+          <div class="social-handle">@zenovaofficial188</div>
+        </div>
+        <span class="social-arrow">›</span>
+      </a>
+      <a class="social-link-item" href="https://www.youtube.com/@Zenovaofficial188" target="_blank">
+        <div class="social-icon-wrap soc-yt">
+          <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        </div>
+        <div class="social-info">
+          <div class="social-name">YouTube</div>
+          <div class="social-handle">@Zenovaofficial188</div>
+        </div>
+        <span class="social-arrow">›</span>
+      </a>
+      <a class="social-link-item" href="https://emmanueljohndev17-afk.github.io/ZENOVA-MAIN/" target="_blank">
+        <div class="social-icon-wrap soc-web">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="22" height="22"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+        </div>
+        <div class="social-info">
+          <div class="social-name">Website</div>
+          <div class="social-handle">emmanueljohndev17-afk.github.io/ZENOVA-MAIN</div>
+        </div>
+        <span class="social-arrow">›</span>
+      </a>
+      <a class="social-link-item" href="mailto:zenovaofficial188@gmail.com">
+        <div class="social-icon-wrap soc-mail">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="22" height="22"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div class="social-info">
+          <div class="social-name">Email Us</div>
+          <div class="social-handle">zenovaofficial188@gmail.com</div>
+        </div>
+        <span class="social-arrow">›</span>
+      </a>
+      <a class="social-link-item" href="https://whatsapp.com/channel/0029VbCH1j60wak1HKVmfG3I" target="_blank">
+        <div class="social-icon-wrap" style="background:linear-gradient(135deg,#25d366,#128c7e)">
+          <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </div>
+        <div class="social-info">
+          <div class="social-name">WhatsApp Channel</div>
+          <div class="social-handle">Join our study community</div>
+        </div>
+        <span class="social-arrow">›</span>
+      </a>
+    </div>
+
+    <!-- Footer -->
+    <div class="about-footer-note">Made with ❤️ for Nigerian students · Zenova © 2025</div>
+
+  </div>
+
+  <!-- ══ EBOOK LIBRARY ══ -->
+  <div id="page-library" class="page">
+
+    <div class="card lib-hero">
+      <div class="lib-hero-title">📚 Zenova Library</div>
+      <div class="lib-hero-sub">Free eBooks crafted by Zenova to help you study smarter and win bigger</div>
+      <div class="lib-stats">
+        <div class="lib-stat"><div class="lib-stat-val">5</div><div class="lib-stat-lbl">eBooks</div></div>
+        <div class="lib-stat"><div class="lib-stat-val">Free</div><div class="lib-stat-lbl">Always</div></div>
+        <div class="lib-stat"><div class="lib-stat-val">PDF</div><div class="lib-stat-lbl">Format</div></div>
+        <div class="lib-stat"><div class="lib-stat-val">126+</div><div class="lib-stat-lbl">Pages</div></div>
+      </div>
+    </div>
+
+    <div class="card share-banner">
+      <div class="share-title">🚀 Share Zenova with Friends</div>
+      <div class="share-sub">Help your study buddies discover Zenova — studying is better together!</div>
+      <div class="share-circle-btns">
+        <div class="share-circle-wrap" onclick="shareWhatsApp()">
+          <div class="share-circle whatsapp-circle">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="26" height="26"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.122.554 4.118 1.528 5.852L0 24l6.335-1.51A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.013-1.375l-.36-.213-3.728.888.916-3.618-.235-.372A9.818 9.818 0 1112 21.818z"/></svg>
+          </div>
+          <div class="share-circle-lbl">WhatsApp</div>
+        </div>
+        <div class="share-circle-wrap" onclick="shareTwitter()">
+          <div class="share-circle twitter-circle">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.259 5.629 5.905-5.629zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </div>
+          <div class="share-circle-lbl">Twitter / X</div>
+        </div>
+        <div class="share-circle-wrap" onclick="shareInstagram()">
+          <div class="share-circle instagram-circle">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          </div>
+          <div class="share-circle-lbl">Instagram</div>
+        </div>
+        <div class="share-circle-wrap" onclick="copyLink()">
+          <div class="share-circle copy-circle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="22" height="22"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </div>
+          <div class="share-circle-lbl">Copy Link</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 eBooks -->
+    <div class="ebook-card">
+      <div class="ebook-spine" style="background:linear-gradient(160deg,#0b1f4a,#2354e6);">
+        <div class="ebook-spine-icon">📖</div>
+        <div class="ebook-spine-num">01</div>
+      </div>
+      <div class="ebook-content">
+        <div class="ebook-meta">18 Pages · JAMB Prep · Free</div>
+        <div class="ebook-title">5 Things That Can Make You Fail JAMB & How to Fix Them</div>
+        <div class="ebook-desc-short">The 5 critical mistakes that silently destroy JAMB scores — and the exact fixes with a 60-day study plan.</div>
+        <div class="ebook-badge-row">
+          <span class="ebook-badge-pill" style="background:#fef3c7;color:#b45309">JAMB Prep</span>
+          <span class="ebook-badge-pill" style="background:#dcfce7;color:#15803d">Score 300+</span>
+          <span class="ebook-badge-pill" style="background:#f5a623;color:white">JAMB</span>
+        </div>
+        <div class="ebook-btn-row">
+          <button class="btn-read" onclick="openPDF('pdf1','5 Things That Can Make You Fail JAMB & How to Fix Them')">▶ Read Now</button>
+          <button class="btn-dl" onclick="downloadPDF('pdf1','5_Things_Fail_JAMB_Zenova.pdf')" title="Download PDF">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="ebook-card">
+      <div class="ebook-spine" style="background:linear-gradient(160deg,#1e3d80,#7c3aed);">
+        <div class="ebook-spine-icon">🏆</div>
+        <div class="ebook-spine-num">02</div>
+      </div>
+      <div class="ebook-content">
+        <div class="ebook-meta">14 Pages · Exam Technique · Free</div>
+        <div class="ebook-title">5 Ways to Answer JAMB Questions Like a Pro</div>
+        <div class="ebook-desc-short">Proven strategies top scorers use — eliminate wrong answers, manage time perfectly and score 300+.</div>
+        <div class="ebook-badge-row">
+          <span class="ebook-badge-pill" style="background:#ede9fe;color:#7c3aed">Technique</span>
+          <span class="ebook-badge-pill" style="background:#dbeafe;color:#1d4ed8">Time Mgmt</span>
+          <span class="ebook-badge-pill" style="background:#10b981;color:white">GUIDE</span>
+        </div>
+        <div class="ebook-btn-row">
+          <button class="btn-read" onclick="openPDF('pdf2','5 Ways to Answer JAMB Questions Like a Pro')">▶ Read Now</button>
+          <button class="btn-dl" onclick="downloadPDF('pdf2','5_Ways_JAMB_Zenova.pdf')" title="Download PDF">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="ebook-card">
+      <div class="ebook-spine" style="background:linear-gradient(160deg,#0b1f4a,#162c62);">
+        <div class="ebook-spine-icon">⚡</div>
+        <div class="ebook-spine-num">03</div>
+      </div>
+      <div class="ebook-content">
+        <div class="ebook-meta">45 Pages · Productivity · Free</div>
+        <div class="ebook-title">Atomic Productivity for Students</div>
+        <div class="ebook-desc-short">Study Less. Achieve More. Deep focus, anti-procrastination, unbreakable routines and exam mastery.</div>
+        <div class="ebook-badge-row">
+          <span class="ebook-badge-pill" style="background:#fef3c7;color:#b45309">Deep Work</span>
+          <span class="ebook-badge-pill" style="background:#dcfce7;color:#15803d">Routines</span>
+          <span class="ebook-badge-pill" style="background:#f5a623;color:white">BESTSELLER</span>
+        </div>
+        <div class="ebook-btn-row">
+          <button class="btn-read" onclick="openPDF('pdf3','Atomic Productivity for Students')">▶ Read Now</button>
+          <button class="btn-dl" onclick="downloadPDF('pdf3','Atomic_Productivity_Zenova.pdf')" title="Download PDF">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="ebook-card">
+      <div class="ebook-spine" style="background:linear-gradient(160deg,#0f172a,#1e3a5f);">
+        <div class="ebook-spine-icon">💻</div>
+        <div class="ebook-spine-num">04</div>
+      </div>
+      <div class="ebook-content">
+        <div class="ebook-meta">60 Pages · Africa Edition · Free</div>
+        <div class="ebook-title">Digital Skills That Pay in 2026</div>
+        <div class="ebook-desc-short">How Nigerian students learn high-income skills — Design, Video, Copywriting, AI — and earn online in 90 days.</div>
+        <div class="ebook-badge-row">
+          <span class="ebook-badge-pill" style="background:#fee2e2;color:#b91c1c">Freelancing</span>
+          <span class="ebook-badge-pill" style="background:#dcfce7;color:#15803d">Nigeria</span>
+          <span class="ebook-badge-pill" style="background:#ef4444;color:white">HOT 🔥</span>
+        </div>
+        <div class="ebook-btn-row">
+          <button class="btn-read" onclick="openPDF('pdf4','Digital Skills That Pay in 2026')">▶ Read Now</button>
+          <button class="btn-dl" onclick="downloadPDF('pdf4','Digital_Skills_2026_Zenova.pdf')" title="Download PDF">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="ebook-card">
+      <div class="ebook-spine" style="background:linear-gradient(160deg,#065f46,#0b1f4a);">
+        <div class="ebook-spine-icon">🎯</div>
+        <div class="ebook-spine-num">05</div>
+      </div>
+      <div class="ebook-content">
+        <div class="ebook-meta">13 Pages · Student System · Free</div>
+        <div class="ebook-title">Study Smarter, Win Bigger</div>
+        <div class="ebook-desc-short">The Zenova Student System — study strategy, productivity, exam mastery, discipline and a 7-day action plan.</div>
+        <div class="ebook-badge-row">
+          <span class="ebook-badge-pill" style="background:#ede9fe;color:#7c3aed">Study System</span>
+          <span class="ebook-badge-pill" style="background:#dbeafe;color:#1d4ed8">7-Day Plan</span>
+          <span class="ebook-badge-pill" style="background:#7c3aed;color:white">OFFICIAL</span>
+        </div>
+        <div class="ebook-btn-row">
+          <button class="btn-read" onclick="openPDF('pdf5','Study Smarter, Win Bigger')">▶ Read Now</button>
+          <button class="btn-dl" onclick="downloadPDF('pdf5','Study_Smarter_Win_Bigger_Zenova.pdf')" title="Download PDF">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="text-align:center;padding:26px 20px">
+      <div style="font-size:32px;margin-bottom:10px">🔜</div>
+      <div class="section-title" style="margin-bottom:5px">More eBooks Coming Soon</div>
+      <div class="section-sub">Follow <strong>@zenovaofficial188</strong> on Instagram & TikTok for new releases</div>
+    </div>
+
+  </div><!-- /library -->
+
+  <!-- PDF Viewer Modal -->
+  <div id="pdf-modal" class="pdf-modal-overlay">
+    <div class="pdf-modal-header">
+      <span class="pdf-modal-title" id="pdf-modal-title">eBook</span>
+      <button class="pdf-modal-dl" id="pdf-modal-dl-btn" onclick="downloadCurrentPDF()">⬇ Download</button>
+      <button class="pdf-modal-close" onclick="closePDF()">✕</button>
+    </div>
+    <iframe id="pdf-frame" class="pdf-frame"></iframe>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+      Home
+      <div class="nav-active-pill"></div>
+    </button>
+    <button class="nav-item" onclick="showPage('library')" id="nav-library">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      Library
+      <div class="nav-active-pill"></div>
+    </button>
+    <button class="nav-item" onclick="showPage('progress')" id="nav-progress">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Progress
+      <div class="nav-active-pill"></div>
+    </button>
+  </nav>
+
+</div><!-- /app-screen -->
+
+<!-- ════════════════════════════════════════
+     MODALS
+════════════════════════════════════════ -->
+<div id="modal-card" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title"><span id="modal-card-title">New Flashcard</span><span class="modal-close" onclick="closeModal('modal-card')">×</span></div>
+    <div class="form-group"><label class="form-label">Question</label><textarea id="fc-q-input" class="form-input" rows="3" placeholder="Enter your question…"></textarea></div>
+    <div class="form-group"><label class="form-label">Answer</label><textarea id="fc-a-input" class="form-input" rows="3" placeholder="Enter the answer…"></textarea></div>
+    <div class="form-group"><label class="form-label">Difficulty</label><div class="diff-select"><button class="diff-btn easy active" onclick="selectDiff('easy',this)">Easy</button><button class="diff-btn medium" onclick="selectDiff('medium',this)">Medium</button><button class="diff-btn hard" onclick="selectDiff('hard',this)">Hard</button></div></div>
+    <input type="hidden" id="fc-edit-id" value=""/>
+    <button class="btn-primary" onclick="saveCard()" style="margin-top:8px">Save Card</button>
+  </div>
+</div>
+
+<div id="modal-exam" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title"><span>Add Exam</span><span class="modal-close" onclick="closeModal('modal-exam')">×</span></div>
+    <div class="form-group"><label class="form-label">Subject / Exam Name</label><input id="exam-subject" type="text" class="form-input" placeholder="e.g. Mathematics Paper 1"/></div>
+    <div class="form-group"><label class="form-label">Date & Time</label><input id="exam-date" type="datetime-local" class="form-input"/></div>
+    <div class="form-group"><label class="form-label">Notes (optional)</label><input id="exam-notes" type="text" class="form-input" placeholder="e.g. Room 204, bring calculator"/></div>
+    <button class="btn-primary" onclick="saveExam()" style="margin-top:8px">Add Exam</button>
+  </div>
+</div>
+
+<div id="modal-slot" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title"><span>Add Schedule Slot</span><span class="modal-close" onclick="closeModal('modal-slot')">×</span></div>
+    <div class="form-group"><label class="form-label">Day</label><select id="slot-day" class="form-input"><option value="0">Monday</option><option value="1">Tuesday</option><option value="2">Wednesday</option><option value="3">Thursday</option><option value="4">Friday</option><option value="5">Saturday</option><option value="6">Sunday</option></select></div>
+    <div class="form-group"><label class="form-label">Time</label><input id="slot-time" type="time" class="form-input"/></div>
+    <div class="form-group"><label class="form-label">Subject</label><input id="slot-subject" type="text" class="form-input" placeholder="e.g. Chemistry"/></div>
+    <div class="form-group"><label class="form-label">Notes (optional)</label><input id="slot-notes" type="text" class="form-input" placeholder="e.g. Chapter 4 revision"/></div>
+    <div class="form-group"><label class="form-label">Colour</label>
+      <div class="color-swatches" id="color-swatches">
+        <div class="swatch selected" style="background:#2354e6" data-color="#2354e6" onclick="selectColor(this)"></div>
+        <div class="swatch" style="background:#7c3aed" data-color="#7c3aed" onclick="selectColor(this)"></div>
+        <div class="swatch" style="background:#10b981" data-color="#10b981" onclick="selectColor(this)"></div>
+        <div class="swatch" style="background:#f5a623" data-color="#f5a623" onclick="selectColor(this)"></div>
+        <div class="swatch" style="background:#ef4444" data-color="#ef4444" onclick="selectColor(this)"></div>
+        <div class="swatch" style="background:#0b1f4a" data-color="#0b1f4a" onclick="selectColor(this)"></div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="saveSlot()" style="margin-top:8px">Add to Schedule</button>
+  </div>
+</div>
+
+<div id="modal-name" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title"><span>Edit Name</span><span class="modal-close" onclick="closeModal('modal-name')">×</span></div>
+    <div class="form-group"><label class="form-label">Display Name</label><input id="name-input" type="text" class="form-input" placeholder="Your name"/></div>
+    <button class="btn-primary" onclick="saveName()">Save</button>
+  </div>
+</div>
+
+<div id="modal-password" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-title"><span>Change Password</span><span class="modal-close" onclick="closeModal('modal-password')">×</span></div>
+    <div class="form-group"><label class="form-label">New Password</label><input id="new-pass-input" type="password" class="form-input" placeholder="Min. 6 characters"/></div>
+    <div class="form-group"><label class="form-label">Confirm Password</label><input id="confirm-pass-input" type="password" class="form-input" placeholder="Repeat new password"/></div>
+    <button class="btn-primary" onclick="changePassword()">Update Password</button>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════
+   FIREBASE
+════════════════════════════════════════════════ */
+const firebaseConfig = {
+  apiKey:            "AIzaSyCAVrP5ZGQhRJqu2yWVcFvnbpt-jJmnEjs",
+  authDomain:        "zenova-c20ff.firebaseapp.com",
+  projectId:         "zenova-c20ff",
+  storageBucket:     "zenova-c20ff.firebasestorage.app",
+  messagingSenderId: "363544939835",
+  appId:             "1:363544939835:web:3f89372dd364569294bb1e"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db   = firebase.firestore();
+
+/* ════════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════════ */
+let currentUser    = null;
+let userProfile    = {};
+let flashcards     = [];
+let sessions       = [];
+let exams          = [];
+let timetableSlots = [];
+
+// Timer
+let timerInterval = null, timerSeconds = 0, timerRunning = false;
+let timerMode = 'countdown', timerTarget = 0;
+let pomodoroPhase = 'work', pomodoroCount = 0;
+const RING_CIRC = 427.3;
+
+// Flashcards
+let studyIdx = 0, currentFilter = 'all', selectedDiff = 'easy';
+
+// Exam tickers
+let examIntervals = {};
+
+// Timetable
+let selectedColor = '#2354e6';
+
+// AI Chat
+let chatHistory = [];
+
+/* ════════════════════════════════════════════════
+   XP & LEVELLING SYSTEM
+════════════════════════════════════════════════ */
+function getXP() {
+  const m = userProfile.totalStudyMinutes || 0;
+  const c = flashcards.length;
+  const s = sessions.length;
+  const streak = userProfile.streak || 0;
+  return Math.floor(m * 2 + c * 5 + s * 3 + streak * 10);
+}
+function getLevel(xp) {
+  if (xp < 100) return 1;
+  if (xp < 300) return 2;
+  if (xp < 600) return 3;
+  if (xp < 1000) return 4;
+  if (xp < 1500) return 5;
+  if (xp < 2200) return 6;
+  if (xp < 3000) return 7;
+  if (xp < 4000) return 8;
+  if (xp < 5500) return 9;
+  return 10;
+}
+function getLevelTitle(lvl) {
+  const t = ['','Rookie','Learner','Scholar','Achiever','Explorer','Champion','Expert','Master','Legend','Grandmaster'];
+  return t[Math.min(lvl, 10)] || 'Pro';
+}
+
+/* ════════════════════════════════════════════════
+   ACHIEVEMENTS
+════════════════════════════════════════════════ */
+const ACHIEVEMENTS = [
+  { id:'first_card', icon:'🃏', name:'First Card', desc:'Create your first flashcard', check: ()=>flashcards.length>=1 },
+  { id:'deck_10', icon:'📚', name:'Deck Builder', desc:'Create 10 flashcards', check: ()=>flashcards.length>=10 },
+  { id:'first_session', icon:'⏱️', name:'First Step', desc:'Complete your first session', check: ()=>sessions.length>=1 },
+  { id:'streak_3', icon:'🔥', name:'On Fire', desc:'3-day study streak', check: ()=>(userProfile.streak||0)>=3 },
+  { id:'streak_7', icon:'💥', name:'Week Warrior', desc:'7-day study streak', check: ()=>(userProfile.streak||0)>=7 },
+  { id:'hour_5', icon:'⭐', name:'Rising Star', desc:'Study 5 hours total', check: ()=>(userProfile.totalStudyMinutes||0)>=300 },
+  { id:'hour_20', icon:'🌟', name:'Dedicated', desc:'Study 20 hours total', check: ()=>(userProfile.totalStudyMinutes||0)>=1200 },
+  { id:'exam_1', icon:'📅', name:'Prepared', desc:'Add your first exam', check: ()=>exams.length>=1 },
+];
+function renderAchievements() {
+  const grid = document.getElementById('achievements-grid');
+  if (!grid) return;
+  grid.innerHTML = ACHIEVEMENTS.map(a => {
+    const unlocked = a.check();
+    return `<div class="achievement-card ${unlocked?'unlocked':''}">
+      <div class="ach-icon">${a.icon}</div>
+      <div class="ach-name">${a.name}</div>
+      <div class="ach-desc">${a.desc}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ════════════════════════════════════════════════
+   AUTH STATE
+════════════════════════════════════════════════ */
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+  .catch(() => {})
+  .finally(() => {
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        currentUser = user;
+        try { await loadUserData(); } catch(e) { console.error(e); }
+        enterApp();
+      } else {
+        hideLoading();
+        showScreen('auth-screen');
+      }
+    });
+  });
+
+function hideLoading() {
+  const el = document.getElementById('loading-screen');
+  el.classList.add('hidden');
+  setTimeout(() => el.style.display = 'none', 500);
+}
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+}
+
+/* ════════════════════════════════════════════════
+   AUTH FUNCTIONS
+════════════════════════════════════════════════ */
+function switchTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', i===(tab==='login'?0:1)));
+  document.getElementById('login-form').style.display  = tab==='login'  ? '' : 'none';
+  document.getElementById('signup-form').style.display = tab==='signup' ? '' : 'none';
+  document.getElementById('auth-error').classList.remove('show');
+}
+function showAuthError(msg) {
+  const el = document.getElementById('auth-error');
+  el.textContent = msg; el.classList.remove('show');
+  void el.offsetWidth; // reflow to re-trigger animation
+  el.classList.add('show');
+}
+function setLoading(id, on) {
+  const b = document.getElementById(id);
+  b.disabled = on;
+  b.innerHTML = on ? '<span class="spinner"></span>' : (id==='btn-login' ? 'Log In' : 'Create Account');
+}
+async function doSignup() {
+  const name=document.getElementById('signup-name').value.trim(),
+        email=document.getElementById('signup-email').value.trim(),
+        pass=document.getElementById('signup-pass').value;
+  if(!name||!email||!pass) return showAuthError('Please fill in all fields.');
+  if(pass.length<6) return showAuthError('Password must be at least 6 characters.');
+  setLoading('btn-signup',true);
+  try {
+    const cred = await auth.createUserWithEmailAndPassword(email,pass);
+    await cred.user.updateProfile({displayName:name});
+    await initUserProfile(cred.user,name);
+  } catch(e) { showAuthError(friendlyError(e.code)); setLoading('btn-signup',false); }
+}
+async function doLogin() {
+  const email=document.getElementById('login-email').value.trim(),
+        pass=document.getElementById('login-pass').value;
+  if(!email||!pass) return showAuthError('Please enter your email and password.');
+  setLoading('btn-login',true);
+  try { await auth.signInWithEmailAndPassword(email,pass); }
+  catch(e) { showAuthError(friendlyError(e.code)); setLoading('btn-login',false); }
+}
+async function doLogout() {
+  if(!confirm('Sign out of Zenova?')) return;
+  stopTimer(); clearExamIntervals();
+  currentUser=null; userProfile={}; flashcards=[]; sessions=[]; exams=[]; timetableSlots=[];
+  await auth.signOut();
+  showScreen('auth-screen'); showPage('dashboard');
+}
+function friendlyError(code) {
+  const m = {
+    'auth/user-not-found':'No account found with this email.',
+    'auth/wrong-password':'Incorrect password.',
+    'auth/invalid-credential':'Invalid email or password.',
+    'auth/email-already-in-use':'This email is already registered.',
+    'auth/invalid-email':'Please enter a valid email address.',
+    'auth/weak-password':'Password is too weak.',
+    'auth/too-many-requests':'Too many attempts. Please try again later.',
+    'auth/network-request-failed':'Network error. Check your connection.',
+  };
+  return m[code]||'Something went wrong. Please try again.';
+}
+
+/* ════════════════════════════════════════════════
+   FIRESTORE DATA
+════════════════════════════════════════════════ */
+async function initUserProfile(user,name) {
+  const p={name,email:user.email,avatarUrl:'',totalStudyMinutes:0,streak:0,lastStudyDate:'',weekData:[0,0,0,0,0,0,0],sessions:[],createdAt:new Date().toISOString()};
+  await db.collection('users').doc(user.uid).set(p);
+  userProfile=p;
+}
+async function loadUserData() {
+  const uid=currentUser.uid;
+  const doc=await db.collection('users').doc(uid).get();
+  if(doc.exists){
+    userProfile=doc.data();
+    sessions=userProfile.sessions||[];
+    try{
+      const savedAvatar = localStorage.getItem('zenova_avatar_'+uid);
+      if(savedAvatar) userProfile.avatarUrl = savedAvatar;
+      if(!userProfile.name){
+        const savedName = localStorage.getItem('zenova_name_'+uid);
+        if(savedName) userProfile.name = savedName;
+      }
+    }catch(e){}
+  }
+  else await initUserProfile(currentUser,currentUser.displayName||currentUser.email);
+  flashcards=(await db.collection('users').doc(uid).collection('cards').orderBy('createdAt','desc').get()).docs.map(d=>({id:d.id,...d.data()}));
+  exams=(await db.collection('users').doc(uid).collection('exams').orderBy('dateTime','asc').get()).docs.map(d=>({id:d.id,...d.data()}));
+  timetableSlots=(await db.collection('users').doc(uid).collection('timetable').orderBy('day','asc').get()).docs.map(d=>({id:d.id,...d.data()}));
+}
+async function saveProfile(){
+  if(userProfile.avatarUrl){
+    try{ localStorage.setItem('zenova_avatar_'+currentUser.uid, userProfile.avatarUrl); }catch(e){}
+  }
+  const profileToSave = {...userProfile};
+  delete profileToSave.avatarUrl;
+  await db.collection('users').doc(currentUser.uid).set(profileToSave,{merge:true});
+}
+async function saveCardToCloud(card){
+  if(card.id&&card._existing) await db.collection('users').doc(currentUser.uid).collection('cards').doc(card.id).set(card);
+  else{const r=await db.collection('users').doc(currentUser.uid).collection('cards').add(card);card.id=r.id;}
+}
+async function deleteCardFromCloud(id){await db.collection('users').doc(currentUser.uid).collection('cards').doc(id).delete();flashcards=flashcards.filter(c=>c.id!==id);}
+async function saveExamToCloud(e){const r=await db.collection('users').doc(currentUser.uid).collection('exams').add(e);e.id=r.id;}
+async function deleteExamFromCloud(id){await db.collection('users').doc(currentUser.uid).collection('exams').doc(id).delete();exams=exams.filter(e=>e.id!==id);}
+async function saveSlotToCloud(s){const r=await db.collection('users').doc(currentUser.uid).collection('timetable').add(s);s.id=r.id;}
+async function deleteSlotFromCloud(id){await db.collection('users').doc(currentUser.uid).collection('timetable').doc(id).delete();timetableSlots=timetableSlots.filter(s=>s.id!==id);}
+
+/* ════════════════════════════════════════════════
+   APP ENTRY
+════════════════════════════════════════════════ */
+function enterApp() {
+  hideLoading(); showScreen('app-screen');
+  refreshAll(); startExamCountdownTickers();
+}
+function refreshAll() {
+  updateGreeting(); renderDashboard(); renderFlashcards(); renderSessions();
+  renderProfile(); renderProgress(); renderExams(); renderTimetable();
+  updateTopbarAvatar(); checkStreak(); renderAchievements();
+}
+
+/* ════════════════════════════════════════════════
+   NAVIGATION
+════════════════════════════════════════════════ */
+const NAV_PAGES = ['dashboard','library','progress'];
+
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const el = document.getElementById('page-'+page);
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(NAV_PAGES.includes(page)) document.getElementById('nav-'+page)?.classList.add('active');
+  if(page==='progress')   { renderProgress(); renderAchievements(); }
+  if(page==='dashboard')  { renderDashboard(); }
+  if(page==='flashcards') { renderFlashcards(); }
+  if(page==='exams')      { renderExams(); }
+  if(page==='timetable')  { renderTimetable(); }
+  if(page==='profile')    { renderProfile(); }
+  window.scrollTo(0,0);
+}
+
+/* ════════════════════════════════════════════════
+   GREETING & STREAK
+════════════════════════════════════════════════ */
+function updateGreeting() {
+  const h=new Date().getHours(), part=h<12?'morning':h<17?'afternoon':'evening';
+  const name=(userProfile.name||'').split(' ')[0]||'there';
+  const greetings = {
+    morning: ['Good morning', 'Rise and grind', 'Morning hustle'],
+    afternoon: ['Good afternoon', 'Keep going', 'Stay focused'],
+    evening: ['Good evening', 'Night grind', 'Evening study']
+  };
+  const msgs = greetings[part];
+  const greeting = msgs[Math.floor(Math.random()*msgs.length)];
+  document.getElementById('greeting-name').textContent=`${greeting}, ${name}! 👋`;
+  document.getElementById('streak-text').textContent=`${userProfile.streak||0} day streak`;
+  const xp = getXP();
+  document.getElementById('xp-text').textContent=`${xp} XP`;
+  // Motivational sub text
+  const subs = ['Ready to crush today\'s goals?','Let\'s make today count!','Your future self will thank you.','One session at a time 💪','Consistency is your superpower.'];
+  document.getElementById('hero-sub-text').textContent = subs[new Date().getDay() % subs.length];
+}
+function checkStreak() {
+  if(!userProfile.lastStudyDate) return;
+  const diff=Math.floor((new Date(todayStr())-new Date(userProfile.lastStudyDate))/86400000);
+  if(diff>1){userProfile.streak=0;saveProfile();updateGreeting();}
+}
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function recordStudy(minutes) {
+  const today=todayStr();
+  userProfile.totalStudyMinutes=(userProfile.totalStudyMinutes||0)+minutes;
+  const diff=userProfile.lastStudyDate?Math.floor((new Date(today)-new Date(userProfile.lastStudyDate))/86400000):1;
+  if(userProfile.lastStudyDate!==today){userProfile.streak=diff===1?(userProfile.streak||0)+1:1;userProfile.lastStudyDate=today;}
+  if(!userProfile.weekData)userProfile.weekData=[0,0,0,0,0,0,0];
+  userProfile.weekData[(new Date().getDay()+6)%7]=(userProfile.weekData[(new Date().getDay()+6)%7]||0)+minutes;
+  saveProfile();
+}
+
+/* ════════════════════════════════════════════════
+   DASHBOARD
+════════════════════════════════════════════════ */
+function renderDashboard() {
+  const m=userProfile.totalStudyMinutes||0;
+  document.getElementById('stat-hours').textContent=m<60?`${m}m`:`${(m/60).toFixed(1)}h`;
+  document.getElementById('stat-cards').textContent=flashcards.length;
+  document.getElementById('stat-sessions').textContent=sessions.length;
+  document.getElementById('stat-streak').textContent=userProfile.streak||0;
+  document.getElementById('streak-text').textContent=`${userProfile.streak||0} day streak`;
+  const xp=getXP();
+  document.getElementById('xp-text').textContent=`${xp} XP`;
+  document.getElementById('hub-cards-meta').textContent=`${flashcards.length} card${flashcards.length!==1?'s':''}`;
+  document.getElementById('hub-exams-meta').textContent=`${exams.filter(e=>new Date(e.dateTime)>new Date()).length} upcoming`;
+  document.getElementById('hub-tt-meta').textContent=timetableSlots.length?`${timetableSlots.length} slot${timetableSlots.length!==1?'s':''}` : 'View timetable';
+  renderWeekChart(); renderDashExams(); renderDashTimetable();
+}
+function renderWeekChart() {
+  const days=['M','T','W','T','F','S','S'], data=userProfile.weekData||[0,0,0,0,0,0,0];
+  const max=Math.max(...data,1), today=(new Date().getDay()+6)%7;
+  const total=data.reduce((a,b)=>a+b,0);
+  const chart=document.getElementById('week-chart'); chart.innerHTML='';
+  const weekLabel=document.getElementById('week-total-label');
+  if(weekLabel) weekLabel.textContent=total<60?`${total} min total`:`${(total/60).toFixed(1)}h total`;
+  data.forEach((v,i)=>{
+    const pct=Math.round((v/max)*100);
+    const w=document.createElement('div'); w.className='wbar-wrap';
+    w.innerHTML=`<div class="wbar${i===today?' today':''}" style="height:${Math.max(pct,4)}%"></div><div class="wbar-day">${days[i]}</div>`;
+    chart.appendChild(w);
+  });
+}
+function renderDashExams() {
+  const now=Date.now(), upcoming=exams.filter(e=>new Date(e.dateTime).getTime()>now).slice(0,3);
+  const card=document.getElementById('dash-exams-card'), list=document.getElementById('dash-exams-list');
+  if(!upcoming.length){card.style.display='none';return;}
+  card.style.display='';
+  list.innerHTML=upcoming.map(e=>{
+    const ms=new Date(e.dateTime).getTime()-now;
+    const days=Math.floor(ms/86400000), hrs=Math.floor((ms%86400000)/3600000);
+    const col=days<=3?'var(--red)':days<=7?'var(--accent)':'var(--green)';
+    return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div><div style="font-weight:700;font-size:14px;color:var(--navy)">${esc(e.subject)}</div>
+      <div style="font-size:12px;color:var(--text3)">${new Date(e.dateTime).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div></div>
+      <div style="font-weight:800;font-size:13px;color:${col};font-family:var(--font-display)">${days}d ${hrs}h</div>
+    </div>`;
+  }).join('');
+}
+function renderDashTimetable() {
+  const today=(new Date().getDay()+6)%7;
+  const slots=timetableSlots.filter(s=>Number(s.day)===today).sort((a,b)=>a.time.localeCompare(b.time));
+  const card=document.getElementById('dash-tt-card'), list=document.getElementById('dash-tt-list');
+  if(!slots.length){card.style.display='none';return;}
+  card.style.display='';
+  list.innerHTML=slots.map(s=>`<div class="tt-slot" style="margin-bottom:8px"><div class="tt-dot" style="background:${s.color||'var(--blue)'}"></div><div class="tt-time">${s.time}</div><div class="tt-info"><div class="tt-subj">${esc(s.subject)}</div>${s.notes?`<div class="tt-note">${esc(s.notes)}</div>`:''}</div></div>`).join('');
+}
+
+/* ════════════════════════════════════════════════
+   FLASHCARDS
+════════════════════════════════════════════════ */
+function openAddCard(){
+  document.getElementById('modal-card-title').textContent='New Flashcard';
+  document.getElementById('fc-q-input').value='';document.getElementById('fc-a-input').value='';document.getElementById('fc-edit-id').value='';
+  selectedDiff='easy';document.querySelectorAll('.diff-btn').forEach(b=>b.classList.toggle('active',b.classList.contains('easy')));
+  openModal('modal-card');
+}
+function openEditCard(id){
+  const c=flashcards.find(c=>c.id===id);if(!c)return;
+  document.getElementById('modal-card-title').textContent='Edit Flashcard';
+  document.getElementById('fc-q-input').value=c.question;document.getElementById('fc-a-input').value=c.answer;document.getElementById('fc-edit-id').value=id;
+  selectedDiff=c.difficulty||'easy';document.querySelectorAll('.diff-btn').forEach(b=>b.classList.toggle('active',b.classList.contains(selectedDiff)));
+  openModal('modal-card');
+}
+function selectDiff(d,btn){selectedDiff=d;document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
+async function saveCard(){
+  const q=document.getElementById('fc-q-input').value.trim(),a=document.getElementById('fc-a-input').value.trim(),eid=document.getElementById('fc-edit-id').value;
+  if(!q||!a)return toast('Please enter both question and answer','error');
+  const card={question:q,answer:a,difficulty:selectedDiff,createdAt:new Date().toISOString()};
+  if(eid){card.id=eid;card._existing=true;const i=flashcards.findIndex(c=>c.id===eid);if(i>-1)flashcards[i]=card;}
+  else flashcards.unshift(card);
+  await saveCardToCloud(card);closeModal('modal-card');renderFlashcards();renderDashboard();renderProgress();renderAchievements();
+  toast(eid?'Card updated! ✏️':'Card added! 🃏','success');
+}
+async function deleteCard(id){if(!confirm('Delete this flashcard?'))return;await deleteCardFromCloud(id);renderFlashcards();renderDashboard();toast('Card deleted','');}
+function filterCards(d,pill){currentFilter=d;document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));pill.classList.add('active');renderFlashcards();}
+function renderFlashcards(){
+  const fil=currentFilter==='all'?flashcards:flashcards.filter(c=>c.difficulty===currentFilter);
+  document.getElementById('fc-count-label').textContent=`${flashcards.length} card${flashcards.length!==1?'s':''}`;
+  document.getElementById('btn-study').style.display=flashcards.length>0?'':'none';
+  const list=document.getElementById('fc-list');
+  if(!fil.length){list.innerHTML=`<div class="empty"><div class="empty-ico">🃏</div><div class="empty-ttl">${currentFilter==='all'?'No flashcards yet':'No '+currentFilter+' cards'}</div><div class="empty-sub">${currentFilter==='all'?'Tap + to create your first card':'Try a different filter'}</div></div>`;return;}
+  list.innerHTML=fil.map((c,i)=>`<div class="fc-item" style="animation-delay:${i*0.04}s"><span class="fc-diff ${c.difficulty||'easy'}">${cap(c.difficulty||'easy')}</span><div class="fc-content"><div class="fc-q">${esc(c.question)}</div><div class="fc-a">${esc(c.answer)}</div></div><div class="fc-actions"><button class="fc-btn edit" onclick="openEditCard('${c.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="fc-btn del" onclick="deleteCard('${c.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button></div></div>`).join('');
+}
+function startStudy(){if(!flashcards.length)return toast('Add some cards first!','error');studyIdx=0;document.getElementById('fc-list-view').style.display='none';document.getElementById('fc-study-view').style.display='';renderStudyCard();}
+function exitStudy(){document.getElementById('fc-list-view').style.display='';document.getElementById('fc-study-view').style.display='none';document.getElementById('flip-card').classList.remove('flipped');}
+function renderStudyCard(){
+  const cards=currentFilter==='all'?flashcards:flashcards.filter(c=>c.difficulty===currentFilter);
+  const c=cards[studyIdx];
+  document.getElementById('study-progress').textContent=`Card ${studyIdx+1} of ${cards.length}`;
+  const pbar=document.getElementById('study-progress-bar');
+  if(pbar) pbar.innerHTML=`<span style="color:var(--blue);font-weight:800">${studyIdx+1}</span> / ${cards.length} cards`;
+  document.getElementById('study-question').textContent=c?.question||'—';
+  document.getElementById('study-answer').textContent=c?.answer||'—';
+  document.getElementById('flip-card').classList.remove('flipped');
+}
+function flipCard(){document.getElementById('flip-card').classList.toggle('flipped');}
+function nextCard(){const n=(currentFilter==='all'?flashcards:flashcards.filter(c=>c.difficulty===currentFilter)).length;studyIdx=(studyIdx+1)%n;renderStudyCard();}
+function prevCard(){const n=(currentFilter==='all'?flashcards:flashcards.filter(c=>c.difficulty===currentFilter)).length;studyIdx=(studyIdx-1+n)%n;renderStudyCard();}
+
+/* ════════════════════════════════════════════════
+   FOCUS TIMER (with ring animation)
+════════════════════════════════════════════════ */
+const POM_WORK=25*60, POM_BREAK=5*60;
+function setTimerMode(mode,btn){
+  timerMode=mode;document.querySelectorAll('.timer-mode-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');
+  resetTimer();
+  const p=document.getElementById('timer-setup-panel');
+  if(mode==='stopwatch'){p.style.display='none';document.getElementById('timer-status').textContent='Stopwatch — tap ▶ to start';setPhaseLabel('STOPWATCH');}
+  else if(mode==='pomodoro'){p.style.display='none';timerTarget=POM_WORK;pomodoroPhase='work';pomodoroCount=0;updateTimerDisplay();document.getElementById('timer-status').textContent='25 min focus / 5 min break';setPhaseLabel('POMODORO');}
+  else{p.style.display='';document.getElementById('timer-status').textContent='Select a duration above to begin';setPhaseLabel('READY');}
+  updateRingFill(0);
+}
+function setPhaseLabel(txt){const el=document.getElementById('timer-phase-lbl');if(el)el.textContent=txt;}
+function setDuration(m,btn){document.querySelectorAll('.dur-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');timerTarget=m*60;timerSeconds=timerTarget;updateTimerDisplay();document.getElementById('timer-status').textContent=`${m} min — tap ▶ to start`;setPhaseLabel('READY');updateRingFill(0);}
+function applyCustomDuration(){const v=parseInt(document.getElementById('custom-dur').value);if(!v||v<1||v>480)return toast('Enter 1–480 minutes','error');document.querySelectorAll('.dur-btn').forEach(b=>b.classList.remove('active'));timerTarget=v*60;timerSeconds=timerTarget;updateTimerDisplay();document.getElementById('timer-status').textContent=`${v} min — tap ▶ to start`;setPhaseLabel('READY');updateRingFill(0);toast(`Duration set to ${v} min ⏱`,'success');}
+function toggleTimer(){timerRunning?pauseTimer():startTimer();}
+function startTimer(){
+  if(timerMode==='countdown'&&timerTarget===0)return toast('Please set a duration first','error');
+  if(timerMode==='countdown'&&timerSeconds===0)timerSeconds=timerTarget;
+  if(timerMode==='pomodoro'&&timerSeconds===0)timerSeconds=pomodoroPhase==='work'?POM_WORK:POM_BREAK;
+  timerRunning=true;document.getElementById('timer-toggle-btn').textContent='⏸';
+  const statusText=timerMode==='pomodoro'?`${pomodoroPhase==='work'?'🔴 Focus':'🟢 Break'} — Session ${pomodoroCount+1}`:'Studying…';
+  document.getElementById('timer-status').textContent=statusText;
+  setPhaseLabel(timerMode==='pomodoro'?(pomodoroPhase==='work'?'FOCUS':'BREAK'):'RUNNING');
+  timerInterval=setInterval(()=>{
+    if(timerMode==='stopwatch'){timerSeconds++;}
+    else{timerSeconds--;if(timerSeconds<=0){timerSeconds=0;if(timerMode==='pomodoro')handlePomodoroSwitch();else timerComplete();return;}}
+    updateTimerDisplay();updateProgressBar();
+  },1000);
+}
+function handlePomodoroSwitch(){clearInterval(timerInterval);timerRunning=false;document.getElementById('timer-toggle-btn').textContent='▶';if(pomodoroPhase==='work'){pomodoroCount++;lapTimer(true);pomodoroPhase='break';timerSeconds=POM_BREAK;toast(`🟢 Break time! ${pomodoroCount} pomodoro${pomodoroCount>1?'s':''} done`,'success');document.getElementById('timer-status').textContent='5 min break — tap ▶ to start';setPhaseLabel('BREAK');}else{pomodoroPhase='work';timerSeconds=POM_WORK;toast('🔴 Break over — time to focus!','');document.getElementById('timer-status').textContent='25 min focus — tap ▶ to start';setPhaseLabel('FOCUS');}updateTimerDisplay();updateRingFill(0);}
+function timerComplete(){clearInterval(timerInterval);timerRunning=false;document.getElementById('timer-toggle-btn').textContent='▶';document.getElementById('timer-status').textContent='✅ Session complete!';setPhaseLabel('DONE');toast('⏱ Timer complete! Great work!','success');lapTimer(true);}
+function pauseTimer(){timerRunning=false;clearInterval(timerInterval);document.getElementById('timer-toggle-btn').textContent='▶';document.getElementById('timer-status').textContent='Paused';setPhaseLabel('PAUSED');}
+function stopTimer(){pauseTimer();timerSeconds=0;updateTimerDisplay();}
+function resetTimer(){stopTimer();if(timerMode==='countdown')timerSeconds=timerTarget;else if(timerMode==='pomodoro')timerSeconds=POM_WORK;else timerSeconds=0;updateTimerDisplay();updateRingFill(timerMode==='countdown'?0:0);document.getElementById('timer-status').textContent=timerMode==='stopwatch'?'Stopwatch — tap ▶ to start':timerMode==='pomodoro'?'Pomodoro — tap ▶ to start':'Select a duration above to begin';setPhaseLabel(timerMode==='pomodoro'?'POMODORO':timerMode==='stopwatch'?'STOPWATCH':'READY');}
+function lapTimer(auto=false){const secs=timerMode==='stopwatch'?timerSeconds:timerMode==='pomodoro'?POM_WORK-timerSeconds:timerTarget-timerSeconds;if(secs<10&&!auto)return toast('Study at least 10 seconds first!','error');const minutes=Math.max(1,Math.round(secs/60));const s={date:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}),duration:formatTime(secs),minutes};sessions.unshift(s);userProfile.sessions=sessions.slice(0,50);recordStudy(minutes);if(!auto)resetTimer();renderSessions();renderDashboard();renderProfile();renderAchievements();if(!auto)toast(`Session saved! +${minutes} min ✅`,'success');}
+function updateTimerDisplay(){document.getElementById('timer-display').textContent=formatTime(timerSeconds);}
+function updateProgressBar(){
+  if(timerMode==='stopwatch'||!timerTarget)return;
+  const total=timerMode==='pomodoro'?(pomodoroPhase==='work'?POM_WORK:POM_BREAK):timerTarget;
+  const pct=((total-timerSeconds)/total)*100;
+  updateRingFill(Math.min(Math.max(pct,0),100));
+}
+function updateRingFill(pct){
+  const el=document.getElementById('timer-ring-fill');
+  if(!el)return;
+  const offset=RING_CIRC*(1-pct/100);
+  el.style.strokeDashoffset=offset;
+}
+function formatTime(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=s%60;return h>0?`${pad(h)}:${pad(m)}:${pad(sc)}`:`${pad(m)}:${pad(sc)}`;}
+function pad(n){return String(n).padStart(2,'0');}
+function renderSessions(){
+  const log=document.getElementById('session-log');
+  const totalEl=document.getElementById('sessions-total-label');
+  const totalMins=sessions.reduce((a,s)=>a+(s.minutes||0),0);
+  if(totalEl)totalEl.textContent=totalMins<60?`${totalMins} min total`:`${(totalMins/60).toFixed(1)}h total`;
+  if(!sessions.length){log.innerHTML='<div class="empty" style="padding:16px"><div class="empty-ico">📋</div><div class="empty-ttl">No sessions yet</div><div class="empty-sub">Save a session to see it here</div></div>';return;}
+  log.innerHTML=sessions.slice(0,20).map(s=>`<div class="session-item"><span class="session-date">${s.date}</span><span class="session-dur">⏱ ${s.duration}</span></div>`).join('');
+}
+
+/* ════════════════════════════════════════════════
+   EXAM COUNTDOWN
+════════════════════════════════════════════════ */
+function openAddExam(){document.getElementById('exam-subject').value='';document.getElementById('exam-notes').value='';const t=new Date();t.setDate(t.getDate()+1);t.setHours(9,0,0,0);document.getElementById('exam-date').value=t.toISOString().slice(0,16);openModal('modal-exam');}
+async function saveExam(){const sub=document.getElementById('exam-subject').value.trim(),dt=document.getElementById('exam-date').value,notes=document.getElementById('exam-notes').value.trim();if(!sub||!dt)return toast('Please fill in subject and date','error');if(new Date(dt)<=new Date())return toast('Exam date must be in the future','error');const e={subject:sub,dateTime:dt,notes,createdAt:new Date().toISOString()};exams.push(e);exams.sort((a,b)=>new Date(a.dateTime)-new Date(b.dateTime));await saveExamToCloud(e);closeModal('modal-exam');renderExams();renderDashboard();startExamCountdownTickers();renderAchievements();toast('Exam added! 📝','success');}
+async function deleteExam(id){if(!confirm('Remove this exam?'))return;if(examIntervals[id]){clearInterval(examIntervals[id]);delete examIntervals[id];}await deleteExamFromCloud(id);renderExams();renderDashboard();toast('Exam removed','');}
+function renderExams(){
+  document.getElementById('exams-count-label').textContent=`${exams.length} exam${exams.length!==1?'s':''}`;
+  const now=Date.now(),future=exams.filter(e=>new Date(e.dateTime).getTime()>now),past=exams.filter(e=>new Date(e.dateTime).getTime()<=now);
+  const list=document.getElementById('exams-list');
+  if(!future.length&&!past.length){list.innerHTML='<div class="empty"><div class="empty-ico">📝</div><div class="empty-ttl">No exams added yet</div><div class="empty-sub">Tap + to add your first exam</div></div>';return;}
+  list.innerHTML=future.map(e=>examHTML(e,false)).join('')+(past.length?'<div style="font-size:11px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;margin:8px 0">Past Exams</div>'+past.map(e=>examHTML(e,true)).join(''):'');
+}
+function examHTML(e,past){
+  const ms=new Date(e.dateTime).getTime()-Date.now();
+  const d=Math.max(0,Math.floor(ms/86400000)),h=Math.max(0,Math.floor((ms%86400000)/3600000)),m=Math.max(0,Math.floor((ms%3600000)/60000));
+  const col=past?'#8892b0':d<=1?'var(--red)':d<=3?'var(--accent)':'var(--green)';
+  const bpct=past?100:Math.max(0,100-Math.min(100,(ms/86400000/30)*100));
+  return `<div class="exam-card">
+    <div class="exam-subject">${esc(e.subject)}</div>
+    <div class="exam-meta">${new Date(e.dateTime).toLocaleString('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}${e.notes?' · '+esc(e.notes):''}</div>
+    ${past?'<div style="font-size:13px;color:var(--text3);font-weight:600;margin-bottom:8px">Exam completed ✓</div>':`<div class="cd-grid" id="cd-${e.id}">
+      <div class="cd-unit"><div class="cd-val" id="cd-d-${e.id}">${pad(d)}</div><div class="cd-lbl">Days</div></div>
+      <div class="cd-unit"><div class="cd-val" id="cd-h-${e.id}">${pad(h)}</div><div class="cd-lbl">Hrs</div></div>
+      <div class="cd-unit"><div class="cd-val" id="cd-m-${e.id}">${pad(m)}</div><div class="cd-lbl">Mins</div></div>
+      <div class="cd-unit"><div class="cd-val" id="cd-s-${e.id}">00</div><div class="cd-lbl">Secs</div></div>
+    </div><div class="urgency-bar"><div class="urgency-fill" style="width:${bpct}%;background:${col}"></div></div>`}
+    <button class="btn-sm-del" onclick="deleteExam('${e.id}')">🗑 Remove</button>
+  </div>`;
+}
+function startExamCountdownTickers(){clearExamIntervals();exams.filter(e=>new Date(e.dateTime).getTime()>Date.now()).forEach(e=>{examIntervals[e.id]=setInterval(()=>tickExam(e),1000);});}
+function tickExam(e){const ms=new Date(e.dateTime).getTime()-Date.now();if(ms<=0){clearInterval(examIntervals[e.id]);renderExams();return;}const d=Math.floor(ms/86400000),h=Math.floor((ms%86400000)/3600000),m=Math.floor((ms%3600000)/60000),s=Math.floor((ms%60000)/1000);const el=id=>document.getElementById(id);if(el(`cd-d-${e.id}`))el(`cd-d-${e.id}`).textContent=pad(d);if(el(`cd-h-${e.id}`))el(`cd-h-${e.id}`).textContent=pad(h);if(el(`cd-m-${e.id}`))el(`cd-m-${e.id}`).textContent=pad(m);if(el(`cd-s-${e.id}`))el(`cd-s-${e.id}`).textContent=pad(s);}
+function clearExamIntervals(){Object.values(examIntervals).forEach(clearInterval);examIntervals={};}
+
+/* ════════════════════════════════════════════════
+   TIMETABLE
+════════════════════════════════════════════════ */
+const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+function openAddSlot(){document.getElementById('slot-subject').value='';document.getElementById('slot-notes').value='';document.getElementById('slot-time').value='09:00';document.getElementById('slot-day').value=String((new Date().getDay()+6)%7);selectedColor='#2354e6';document.querySelectorAll('.swatch').forEach(s=>s.classList.toggle('selected',s.dataset.color==='#2354e6'));openModal('modal-slot');}
+function selectColor(el){selectedColor=el.dataset.color;document.querySelectorAll('.swatch').forEach(s=>s.classList.remove('selected'));el.classList.add('selected');}
+async function saveSlot(){const day=document.getElementById('slot-day').value,time=document.getElementById('slot-time').value,sub=document.getElementById('slot-subject').value.trim(),notes=document.getElementById('slot-notes').value.trim();if(!sub||!time)return toast('Please fill in time and subject','error');const s={day:Number(day),time,subject:sub,notes,color:selectedColor,createdAt:new Date().toISOString()};timetableSlots.push(s);timetableSlots.sort((a,b)=>a.day!==b.day?a.day-b.day:a.time.localeCompare(b.time));await saveSlotToCloud(s);closeModal('modal-slot');renderTimetable();renderDashboard();toast('Added to schedule! 📅','success');}
+async function deleteSlot(id){if(!confirm('Remove this slot?'))return;await deleteSlotFromCloud(id);renderTimetable();renderDashboard();toast('Slot removed','');}
+function renderTimetable(){
+  const c=document.getElementById('timetable-container');
+  const today=(new Date().getDay()+6)%7;
+  if(!timetableSlots.length){c.innerHTML='<div class="empty"><div class="empty-ico">📅</div><div class="empty-ttl">No schedule yet</div><div class="empty-sub">Tap + to build your weekly timetable</div></div>';return;}
+  let html='';
+  DAYS.forEach((d,i)=>{
+    const slots=timetableSlots.filter(s=>Number(s.day)===i);
+    if(!slots.length)return;
+    const isToday=i===today;
+    html+=`<div class="tt-day-group"><div class="tt-day-label${isToday?' is-today':''}">${d}${isToday?'<span class="tt-today-badge">TODAY</span>':''}</div>${slots.map(s=>`<div class="tt-slot"><div class="tt-dot" style="background:${s.color||'#2354e6'}"></div><div class="tt-time">${s.time}</div><div class="tt-info"><div class="tt-subj">${esc(s.subject)}</div>${s.notes?`<div class="tt-note">${esc(s.notes)}</div>`:''}</div><button class="tt-del" onclick="deleteSlot('${s.id}')">×</button></div>`).join('')}</div>`;
+  });
+  c.innerHTML=html||'<div class="empty"><div class="empty-ico">📅</div><div class="empty-ttl">No schedule yet</div><div class="empty-sub">Tap + to build your weekly timetable</div></div>';
+}
+
+/* ════════════════════════════════════════════════
+   AI CHAT
+════════════════════════════════════════════════ */
+function buildSystemPrompt(){
+  const name=userProfile.name||'Student';
+  const cards=flashcards.slice(0,20).map(c=>`Q: ${c.question} | A: ${c.answer}`).join('\n');
+  const examList=exams.slice(0,5).map(e=>`${e.subject} on ${new Date(e.dateTime).toLocaleDateString()}`).join(', ');
+  const streak=userProfile.streak||0;
+  const hours=Math.floor((userProfile.totalStudyMinutes||0)/60);
+  return `You are Zen, a friendly, brilliant, and encouraging AI study tutor inside the Zenova study app — designed for Nigerian students preparing for JAMB and other exams.
+
+Student name: ${name}
+Study streak: ${streak} days
+Total study hours: ${hours}h
+Their flashcards: ${cards||'None yet'}
+Upcoming exams: ${examList||'None set'}
+
+Your role:
+- Help with any subject (Maths, English, Biology, Chemistry, Physics, Literature, Economics, etc.)
+- Explain concepts clearly with relatable Nigerian examples where possible
+- Create quiz questions and test the student on their flashcards
+- Build personalized study plans and give JAMB-specific exam tips
+- Be encouraging, warm, and motivational — celebrate their progress
+- Keep responses focused (under 200 words unless asked for more)
+- Use markdown formatting (bold for key terms, bullet points for lists)
+- Reference their streak and study stats to motivate them when relevant
+
+Always be warm, supportive, and focused on helping them succeed in JAMB and beyond.`;
+}
+
+function scrollChatToBottom(){
+  const msgs=document.getElementById('chat-msgs');
+  if(msgs)setTimeout(()=>msgs.scrollTop=msgs.scrollHeight,50);
+}
+
+function clearChat(){
+  chatHistory=[];
+  const msgs=document.getElementById('chat-msgs');
+  msgs.innerHTML=`<div class="chat-welcome">
+    <div class="chat-welcome-icon">🤖</div>
+    <div class="chat-welcome-title">Chat cleared!</div>
+    <div class="chat-welcome-sub">Ask me anything — I'm here to help you study smarter.</div>
+  </div>`;
+}
+
+function sendSuggestion(text){
+  const input=document.getElementById('chat-input');
+  input.value=text;
+  sendChat();
+}
+
+function handleChatKey(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}
+}
+
+function autoResizeChat(el){
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight,120)+'px';
+}
+
+function appendMsg(role,text){
+  const msgs=document.getElementById('chat-msgs');
+  const div=document.createElement('div');
+  div.className=`msg ${role}`;
+  const now=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  if(role==='ai'){
+    div.innerHTML=`<div class="msg-icon">🤖</div><div><div class="msg-bubble">${formatMsgText(text)}</div><div class="msg-time">${now}</div></div>`;
+  } else {
+    div.innerHTML=`<div><div class="msg-bubble">${esc(text)}</div><div class="msg-time" style="color:rgba(255,255,255,.5)">${now}</div></div>`;
+  }
+  msgs.appendChild(div);
+  scrollChatToBottom();
+}
+
+function formatMsgText(text){
+  // Basic markdown formatting for AI messages
+  return text
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/^• /gm,'&#8226; ')
+    .replace(/\n/g,'<br>');
+}
+
+function showTyping(){
+  const msgs=document.getElementById('chat-msgs');
+  const div=document.createElement('div');
+  div.className='msg ai'; div.id='typing-indicator';
+  div.innerHTML=`<div class="msg-icon">🤖</div><div class="msg-bubble" style="padding:8px 14px"><div class="typing-wrap"><div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div></div></div>`;
+  msgs.appendChild(div);
+  scrollChatToBottom();
+}
+function hideTyping(){document.getElementById('typing-indicator')?.remove();}
+
+async function sendChat(){
+  const input=document.getElementById('chat-input');
+  const msg=input.value.trim();
+  if(!msg)return;
+  input.value='';
+  input.style.height='auto';
+  appendMsg('user',msg);
+  chatHistory.push({role:'user',content:msg});
+  showTyping();
+  try{
+    const reply=await callClaude();
+    hideTyping();
+    appendMsg('ai',reply);
+    chatHistory.push({role:'assistant',content:reply});
+    if(chatHistory.length>24)chatHistory=chatHistory.slice(-24);
+  }catch(e){
+    hideTyping();
+    appendMsg('ai','Sorry, I ran into an error. Please try again! 🙏');
+  }
+}
+
+async function callClaude(){
+  const systemMsg = buildSystemPrompt();
+  const msgs = [
+    {role:'user', content: systemMsg + '\n\nPlease acknowledge you are ready to help as Zen.'},
+    {role:'assistant', content: 'Hi! I am Zen, your AI study tutor. Ready to help you ace your exams!'},
+    ...chatHistory
+  ];
+  const response = await puter.ai.chat(msgs, {model:'claude-haiku-4-5-20251001'});
+  return response?.message?.content?.[0]?.text || response?.text || 'I had trouble responding. Please try again.';
+}
+
+/* ════════════════════════════════════════════════
+   PROGRESS
+════════════════════════════════════════════════ */
+function renderProgress(){
+  const m=userProfile.totalStudyMinutes||0, target=600;
+  const pct=Math.min(Math.round((m/target)*100),100);
+  const circ=389.6;
+  const offset=circ-(circ*pct/100);
+  document.getElementById('progress-ring').style.strokeDashoffset=offset;
+  document.getElementById('ring-pct').textContent=pct+'%';
+
+  // Hours goal
+  const h=m/60;
+  document.getElementById('goal-hours-done').textContent=h.toFixed(1);
+  const hp=Math.min(Math.round((h/10)*100),100);
+  document.getElementById('goal-bar-hours').style.width=hp+'%';
+  document.getElementById('goal-pct-hours').textContent=hp+'%';
+
+  // Cards goal
+  const cl=flashcards.length, cp=Math.min(Math.round((cl/20)*100),100);
+  document.getElementById('goal-cards-done').textContent=cl;
+  document.getElementById('goal-bar-cards').style.width=cp+'%';
+  document.getElementById('goal-pct-cards').textContent=cp+'%';
+
+  // Streak goal
+  const st=userProfile.streak||0, sp=Math.min(Math.round((st/7)*100),100);
+  document.getElementById('goal-streak-done').textContent=st;
+  document.getElementById('goal-bar-streak').style.width=sp+'%';
+  document.getElementById('goal-pct-streak').textContent=sp+'%';
+
+  // Sessions goal
+  const sl=sessions.length, sep=Math.min(Math.round((sl/14)*100),100);
+  document.getElementById('goal-sess-done').textContent=sl;
+  document.getElementById('goal-bar-sess').style.width=sep+'%';
+  document.getElementById('goal-pct-sess').textContent=sep+'%';
+}
+
+/* ════════════════════════════════════════════════
+   PROFILE
+════════════════════════════════════════════════ */
+function renderProfile(){
+  const n=userProfile.name||currentUser?.displayName||'User';
+  const e=userProfile.email||currentUser?.email||'';
+  document.getElementById('profile-name-display').textContent=n;
+  document.getElementById('profile-email-display').textContent=e;
+  document.getElementById('pf-name').textContent=n;
+  document.getElementById('pf-email').textContent=e;
+  const m=userProfile.totalStudyMinutes||0;
+  document.getElementById('ps-hours').textContent=m<60?`${m}m`:`${(m/60).toFixed(1)}h`;
+  document.getElementById('ps-cards').textContent=flashcards.length;
+  document.getElementById('ps-streak').textContent=`🔥${userProfile.streak||0}`;
+  // Avatar
+  if(userProfile.avatarUrl){
+    const big=document.getElementById('profile-avatar-big');
+    big.innerHTML=`<img src="${userProfile.avatarUrl}" alt=""/>`;
+  } else {
+    document.getElementById('profile-avatar-big').textContent=n.charAt(0).toUpperCase()||'?';
+  }
+  // Level badge
+  const xp=getXP(); const lvl=getLevel(xp);
+  const badge=document.getElementById('profile-level-badge');
+  if(badge)badge.innerHTML=`⭐ Level ${lvl} — ${getLevelTitle(lvl)}`;
+}
+
+function updateTopbarAvatar(){
+  const av=document.getElementById('topbar-avatar');
+  if(!av)return;
+  if(userProfile.avatarUrl){
+    av.innerHTML=`<img src="${userProfile.avatarUrl}" alt=""/>`;
+  } else {
+    const n=userProfile.name||currentUser?.displayName||'?';
+    av.textContent=n.charAt(0).toUpperCase()||'?';
+  }
+}
+
+function triggerAvatarUpload(){document.getElementById('avatar-input').click();}
+function handleAvatarUpload(e){
+  const file=e.target.files[0];if(!file)return;
+  if(file.size>2*1024*1024)return toast('Image too large. Max 2MB.','error');
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    userProfile.avatarUrl=ev.target.result;
+    renderProfile();updateTopbarAvatar();saveProfile();toast('Avatar updated! 📸','success');
+  };
+  reader.readAsDataURL(file);
+}
+
+function editName(){
+  document.getElementById('name-input').value=userProfile.name||'';
+  openModal('modal-name');
+}
+async function saveName(){
+  const n=document.getElementById('name-input').value.trim();
+  if(!n)return toast('Name cannot be empty','error');
+  userProfile.name=n;
+  try{localStorage.setItem('zenova_name_'+currentUser.uid,n);}catch(e){}
+  await saveProfile();closeModal('modal-name');renderProfile();updateTopbarAvatar();updateGreeting();toast('Name updated! ✅','success');
+}
+async function changePassword(){
+  const np=document.getElementById('new-pass-input').value,cp=document.getElementById('confirm-pass-input').value;
+  if(!np||!cp)return toast('Please fill in both fields','error');
+  if(np!==cp)return toast('Passwords do not match','error');
+  if(np.length<6)return toast('Password must be at least 6 characters','error');
+  try{await currentUser.updatePassword(np);closeModal('modal-password');toast('Password updated! 🔒','success');}
+  catch(e){toast(friendlyError(e.code)||'Error updating password','error');}
+}
+
+/* ════════════════════════════════════════════════
+   MODALS
+════════════════════════════════════════════════ */
+function openModal(id){document.getElementById(id)?.classList.add('open');}
+function closeModal(id){document.getElementById(id)?.classList.remove('open');}
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');});
+});
+
+/* ════════════════════════════════════════════════
+   TOAST
+════════════════════════════════════════════════ */
+function toast(msg,type=''){
+  const c=document.getElementById('toast-container');
+  const t=document.createElement('div');
+  t.className=`toast${type?' '+type:''}`;
+  const icons={success:'✅',error:'❌','':`ℹ️`};
+  t.innerHTML=`<span>${icons[type]||'ℹ️'}</span><span>${msg}</span>`;
+  c.appendChild(t);
+  setTimeout(()=>t.remove(),3100);
+}
+
+/* ════════════════════════════════════════════════
+   PDF / EBOOK
+════════════════════════════════════════════════ */
+const PDF_DATA = {
+  pdf1: 'https://drive.google.com/file/d/1yCRBz71eoSDPsTY7W-Q6GKFB9VaYNbmo/preview',
+  pdf2: 'https://drive.google.com/file/d/18x3X4OKxkFNtKEGjhTj1dkV9fP0Iakpb/preview',
+  pdf3: 'https://drive.google.com/file/d/1U_xR1OI8J3YR8LVJk85BNS8qhYfPeZ2H/preview',
+  pdf4: 'https://drive.google.com/file/d/1CKXCpJYJ6g39QsB_0xMJAEkAVLMfEJwQ/preview',
+  pdf5: 'https://drive.google.com/file/d/1Wr-RCZ-EVfMFBIYN96WK2rtnWCdZ6Jrk/preview',
+};
+let currentPDFKey = '';
+
+function openPDF(key, title) {
+  currentPDFKey = key;
+  document.getElementById('pdf-modal-title').textContent = title;
+  document.getElementById('pdf-frame').src = PDF_DATA[key];
+  document.getElementById('pdf-modal').classList.add('open');
+}
+function closePDF() {
+  document.getElementById('pdf-modal').classList.remove('open');
+  document.getElementById('pdf-frame').src = '';
+}
+function downloadCurrentPDF() {
+  downloadPDF(currentPDFKey, document.getElementById('pdf-modal-title').textContent.replace(/ /g,'_') + '.pdf');
+}
+function downloadPDF(key, filename) {
+  const a = document.createElement('a');
+  a.href = PDF_DATA[key];
+  a.download = filename;
+  a.click();
+  toast('Downloading eBook... 📥', 'success');
+}
+
+/* ════════════════════════════════════════════════
+   SHARE
+════════════════════════════════════════════════ */
+const SHARE_TEXT = "📚 Hey! I'm using Zenova to prepare for JAMB — it has free eBooks, flashcards, focus timer, exam countdown & AI tutor! Check it out 👇";
+const SHARE_URL  = window.location.href;
+
+function shareTwitter() {
+  const msg = encodeURIComponent('📚 I use Zenova to study smarter — free eBooks, flashcards, AI tutor & more! Check it out 👇 ' + SHARE_URL + ' #Zenova #JAMB #StudySmarter');
+  window.open('https://twitter.com/intent/tweet?text=' + msg, '_blank');
+}
+function shareInstagram() {
+  copyLink();
+  toast('Link copied! Paste it in your Instagram bio or DM 📸', 'success');
+}
+function shareWhatsApp() {
+  const msg = encodeURIComponent(SHARE_TEXT + '\n' + SHARE_URL);
+  window.open('https://wa.me/?text=' + msg, '_blank');
+}
+function copyLink() {
+  if(navigator.clipboard) {
+    navigator.clipboard.writeText(SHARE_URL).then(() => toast('Link copied! 🔗 Share with friends', 'success'));
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = SHARE_URL; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    toast('Link copied! 🔗 Share with friends', 'success');
+  }
+}
+
+/* ════════════════════════════════════════════════
+   UTILS
+════════════════════════════════════════════════ */
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+function esc(s){if(!s)return'';const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+</script>
+</body>
+</html>
