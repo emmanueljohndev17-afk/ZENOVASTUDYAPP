@@ -610,123 +610,6 @@ select.form-input { appearance: none; cursor: pointer; }
    AI CHAT (UPGRADED)
 ═══════════════════════════════════════════ */
 #page-chat { padding: 0; gap: 0; }
-
-/* ═══════════════════════════════════════════
-   ABOUT PAGE
-═══════════════════════════════════════════ */
-.about-hero {
-  background: linear-gradient(145deg, #060f28 0%, var(--navy) 40%, var(--navy-mid) 65%, #2354e6 100%);
-  border-radius: var(--r-xl); padding: 36px 24px 32px;
-  color: white; position: relative; overflow: hidden;
-  text-align: center; box-shadow: var(--shadow-xl);
-}
-.about-hero::before {
-  content: ''; position: absolute; width: 300px; height: 300px; border-radius: 50%;
-  background: rgba(59,106,255,.1); top: -100px; right: -80px; pointer-events: none;
-}
-.about-hero::after {
-  content: ''; position: absolute; width: 180px; height: 180px; border-radius: 50%;
-  background: rgba(255,255,255,.04); bottom: -60px; left: -40px; pointer-events: none;
-}
-.about-logo-circle {
-  width: 80px; height: 80px; border-radius: 22px;
-  background: white; margin: 0 auto 16px;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-display); font-size: 36px; font-weight: 800;
-  color: var(--navy); box-shadow: 0 8px 32px rgba(0,0,0,.25);
-  position: relative; z-index: 1;
-}
-.about-hero-name {
-  font-family: var(--font-display); font-size: 34px; font-weight: 800;
-  letter-spacing: -1.5px; margin-bottom: 8px; position: relative; z-index: 1;
-}
-.about-hero-tagline {
-  font-size: 15px; opacity: .75; font-weight: 500;
-  line-height: 1.5; position: relative; z-index: 1; max-width: 280px; margin: 0 auto 20px;
-}
-.about-hero-badges {
-  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
-  position: relative; z-index: 1;
-}
-.about-badge {
-  background: rgba(255,255,255,.13); border: 1px solid rgba(255,255,255,.22);
-  border-radius: 30px; padding: 6px 14px;
-  font-size: 12px; font-weight: 700; backdrop-filter: blur(6px);
-}
-
-/* Mission card */
-.about-mission {
-  background: white; border-radius: var(--r-lg);
-  border: 1px solid var(--border); box-shadow: var(--shadow-sm);
-  padding: 22px 20px;
-}
-.about-section-label {
-  font-size: 10.5px; font-weight: 800; color: var(--blue);
-  letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 8px;
-}
-.about-mission-text {
-  font-family: var(--font-display); font-size: 18px; font-weight: 600;
-  color: var(--navy); line-height: 1.55;
-}
-
-/* Features grid */
-.about-features-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-}
-.about-feature-card {
-  background: white; border: 1px solid var(--border);
-  border-radius: var(--r-md); padding: 16px 14px;
-  box-shadow: var(--shadow-sm); text-align: center;
-  transition: all .2s;
-}
-.about-feature-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--blue-tint); }
-.about-feature-icon { font-size: 28px; margin-bottom: 8px; }
-.about-feature-name { font-weight: 700; font-size: 13px; color: var(--navy); margin-bottom: 3px; }
-.about-feature-desc { font-size: 11.5px; color: var(--text3); font-weight: 500; line-height: 1.4; }
-
-/* Socials */
-.about-social-card {
-  background: white; border: 1px solid var(--border);
-  border-radius: var(--r-lg); box-shadow: var(--shadow-sm); overflow: hidden;
-}
-.about-social-header {
-  padding: 18px 20px 14px; border-bottom: 1px solid var(--border);
-}
-.about-social-title {
-  font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--navy);
-}
-.about-social-sub { font-size: 12.5px; color: var(--text3); font-weight: 500; margin-top: 2px; }
-.social-link-item {
-  display: flex; align-items: center; gap: 14px;
-  padding: 15px 20px; border-bottom: 1px solid var(--border);
-  text-decoration: none; color: inherit;
-  transition: background .18s;
-  cursor: pointer;
-}
-.social-link-item:last-child { border-bottom: none; }
-.social-link-item:hover { background: var(--bg); }
-.social-icon-wrap {
-  width: 44px; height: 44px; border-radius: 13px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; font-size: 20px;
-}
-.soc-ig   { background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
-.soc-fb   { background: #1877f2; }
-.soc-tt   { background: #010101; }
-.soc-yt   { background: #ff0000; }
-.soc-web  { background: linear-gradient(135deg, var(--navy), var(--blue)); }
-.soc-mail { background: linear-gradient(135deg, #10b981, #059669); }
-.social-info { flex: 1; min-width: 0; }
-.social-name { font-weight: 700; font-size: 14px; color: var(--navy); }
-.social-handle { font-size: 12px; color: var(--text3); font-weight: 500; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.social-arrow { color: var(--border2); font-size: 18px; transition: transform .2s, color .2s; }
-.social-link-item:hover .social-arrow { color: var(--blue); transform: translateX(3px); }
-
-/* Footer note */
-.about-footer-note {
-  text-align: center; padding: 8px 0 4px;
-  font-size: 12px; color: var(--text3); font-weight: 500;
-}
 .ai-header {
   padding: 14px 18px 13px;
   background: white; border-bottom: 1px solid var(--border);
@@ -1119,6 +1002,143 @@ select.form-input { appearance: none; cursor: pointer; }
 .chat-welcome-icon { font-size: 36px; margin-bottom: 8px; }
 .chat-welcome-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 5px; }
 .chat-welcome-sub { font-size: 13px; color: var(--text3); font-weight: 500; line-height: 1.5; }
+
+/* ═══════════════════════════════════════════
+   ABOUT PAGE
+═══════════════════════════════════════════ */
+.about-hero {
+  background: linear-gradient(145deg, #060f28 0%, var(--navy) 40%, var(--navy-mid) 65%, #2354e6 100%);
+  border-radius: var(--r-xl); padding: 32px 24px 28px;
+  color: white; text-align: center; position: relative; overflow: hidden; box-shadow: var(--shadow-xl);
+}
+.about-hero::before { content:''; position:absolute; width:300px; height:300px; border-radius:50%; background:rgba(59,106,255,.1); top:-100px; right:-80px; pointer-events:none; }
+.about-logo-circle { width:80px; height:80px; border-radius:22px; background:white; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:36px; font-weight:800; color:var(--navy); box-shadow:0 8px 32px rgba(0,0,0,.25); position:relative; z-index:1; overflow:hidden; }
+.about-hero-name { font-family:var(--font-display); font-size:34px; font-weight:800; letter-spacing:-1.5px; margin-bottom:8px; position:relative; z-index:1; }
+.about-hero-tagline { font-size:14px; opacity:.7; font-weight:500; line-height:1.5; position:relative; z-index:1; max-width:280px; margin:0 auto 18px; }
+.about-hero-badges { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; position:relative; z-index:1; }
+.about-badge { background:rgba(255,255,255,.13); border:1px solid rgba(255,255,255,.22); border-radius:30px; padding:6px 14px; font-size:12px; font-weight:700; }
+.about-mission { background:white; border-radius:var(--r-lg); border:1px solid var(--border); box-shadow:var(--shadow-sm); padding:20px; }
+.about-section-label { font-size:10.5px; font-weight:800; color:var(--blue); letter-spacing:1.2px; text-transform:uppercase; margin-bottom:8px; }
+.about-mission-text { font-family:var(--font-display); font-size:17px; font-weight:600; color:var(--navy); line-height:1.55; }
+.about-features-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.about-feature-card { background:white; border:1px solid var(--border); border-radius:var(--r-md); padding:16px 14px; box-shadow:var(--shadow-sm); text-align:center; transition:all .2s; }
+.about-feature-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-md); }
+.about-feature-icon { font-size:26px; margin-bottom:7px; }
+.about-feature-name { font-weight:700; font-size:13px; color:var(--navy); margin-bottom:3px; }
+.about-feature-desc { font-size:11.5px; color:var(--text3); font-weight:500; line-height:1.4; }
+.about-social-card { background:white; border:1px solid var(--border); border-radius:var(--r-lg); box-shadow:var(--shadow-sm); overflow:hidden; }
+.about-social-header { padding:16px 20px 12px; border-bottom:1px solid var(--border); }
+.about-social-title { font-family:var(--font-display); font-size:17px; font-weight:700; color:var(--navy); }
+.about-social-sub { font-size:12.5px; color:var(--text3); font-weight:500; margin-top:2px; }
+.social-link-item { display:flex; align-items:center; gap:14px; padding:14px 20px; border-bottom:1px solid var(--border); text-decoration:none; color:inherit; transition:background .18s; cursor:pointer; }
+.social-link-item:last-child { border-bottom:none; }
+.social-link-item:hover { background:var(--bg); }
+.social-icon-wrap { width:44px; height:44px; border-radius:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.soc-ig { background:linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); }
+.soc-fb { background:#1877f2; }
+.soc-tt { background:#010101; }
+.soc-yt { background:#ff0000; }
+.soc-web { background:linear-gradient(135deg,var(--navy),var(--blue)); }
+.soc-mail { background:linear-gradient(135deg,#10b981,#059669); }
+.social-info { flex:1; min-width:0; }
+.social-name { font-weight:700; font-size:14px; color:var(--navy); }
+.social-handle { font-size:12px; color:var(--text3); font-weight:500; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.social-arrow { color:var(--border2); font-size:18px; transition:transform .2s, color .2s; }
+.social-link-item:hover .social-arrow { color:var(--blue); transform:translateX(3px); }
+.about-footer-note { text-align:center; padding:8px 0 4px; font-size:12px; color:var(--text3); font-weight:500; }
+
+/* ═══════════════════════════════════════════
+   LEARN PAGE
+═══════════════════════════════════════════ */
+.learn-header { background:rgba(255,255,255,.97); border-bottom:1px solid var(--border); padding:12px 16px 0; position:sticky; top:0; z-index:40; backdrop-filter:blur(10px); }
+.learn-tabs { display:flex; gap:4px; }
+.learn-tab { flex:1; padding:10px 4px; border-radius:12px 12px 0 0; font-size:12px; font-weight:700; color:var(--text3); transition:all .2s; border-bottom:3px solid transparent; display:flex; align-items:center; justify-content:center; gap:4px; }
+.learn-tab.active { color:var(--navy); border-bottom-color:var(--blue); background:var(--blue-pale); }
+.learn-panel { display:none; padding:14px 16px; flex-direction:column; gap:12px; }
+.learn-panel.active { display:flex; animation:pgIn .25s ease; }
+.drops-filter-wrap { margin-bottom:4px; }
+.drops-filter-row { display:flex; gap:7px; overflow-x:auto; padding-bottom:4px; }
+.drops-filter-row::-webkit-scrollbar { display:none; }
+.drops-chip { padding:7px 14px; border-radius:30px; white-space:nowrap; font-size:12px; font-weight:700; border:1.5px solid var(--border); color:var(--text3); background:white; transition:all .2s; cursor:pointer; flex-shrink:0; }
+.drops-chip.active { background:var(--navy); border-color:var(--navy); color:white; }
+.drops-feed { display:flex; flex-direction:column; gap:10px; }
+.drop-card { background:white; border-radius:var(--r-md); border:1px solid var(--border); box-shadow:var(--shadow-sm); padding:16px 18px; position:relative; overflow:hidden; transition:all .2s; animation:fadeSlideIn .25s ease both; }
+.drop-card:hover { box-shadow:var(--shadow-md); transform:translateY(-1px); }
+.drop-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; border-radius:4px 0 0 4px; }
+.drop-card.study::before { background:var(--blue); }
+.drop-card.focus::before { background:var(--purple); }
+.drop-card.exam::before { background:var(--green); }
+.drop-card.mindset::before { background:var(--accent); }
+.drop-cat-badge { font-size:10px; font-weight:800; letter-spacing:.8px; text-transform:uppercase; margin-bottom:8px; opacity:.6; }
+.drop-card.study .drop-cat-badge { color:var(--blue); }
+.drop-card.focus .drop-cat-badge { color:var(--purple); }
+.drop-card.exam .drop-cat-badge { color:var(--green); }
+.drop-card.mindset .drop-cat-badge { color:var(--accent2); }
+.drop-text { font-size:14.5px; font-weight:600; color:var(--navy); line-height:1.55; }
+.drop-num { position:absolute; top:14px; right:16px; font-size:11px; font-weight:800; color:var(--border2); }
+.qotd-wrap { display:flex; flex-direction:column; gap:10px; }
+.qotd-day-card { background:white; border-radius:var(--r-md); border:1px solid var(--border); box-shadow:var(--shadow-sm); overflow:hidden; }
+.qotd-header { padding:12px 16px; display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--border); cursor:pointer; }
+.qotd-header:hover { background:var(--bg); }
+.qotd-day-badge { padding:4px 10px; border-radius:20px; font-size:11px; font-weight:800; white-space:nowrap; flex-shrink:0; }
+.subj-math { background:#dbeafe; color:#1d4ed8; }
+.subj-eng  { background:#dcfce7; color:#15803d; }
+.subj-chem { background:#fef3c7; color:#b45309; }
+.subj-phys { background:#ede9fe; color:#7c3aed; }
+.subj-bio  { background:#d1fae5; color:#065f46; }
+.qotd-q-preview { flex:1; font-size:13px; font-weight:600; color:var(--navy); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.qotd-toggle { font-size:18px; color:var(--text3); flex-shrink:0; transition:transform .25s; }
+.qotd-day-card.open .qotd-toggle { transform:rotate(180deg); }
+.qotd-body { display:none; padding:14px 16px; gap:10px; flex-direction:column; }
+.qotd-day-card.open .qotd-body { display:flex; }
+.qotd-question { font-size:14px; font-weight:700; color:var(--navy); line-height:1.5; }
+.qotd-answer { background:var(--green-pale); border:1px solid #6ee7b7; border-radius:var(--r-xs); padding:10px 14px; font-size:13px; font-weight:700; color:#065f46; }
+.reality-wrap { display:flex; flex-direction:column; gap:10px; }
+.reality-card { background:linear-gradient(135deg,#0b1f4a 0%,#162c62 100%); border-radius:var(--r-md); padding:18px 20px; color:white; position:relative; overflow:hidden; box-shadow:var(--shadow-md); animation:fadeSlideIn .25s ease both; }
+.reality-num { font-size:10px; font-weight:800; color:rgba(255,255,255,.35); letter-spacing:1px; text-transform:uppercase; margin-bottom:8px; }
+.reality-text { font-size:15px; font-weight:700; color:white; line-height:1.5; font-family:var(--font-display); }
+.reality-fire { font-size:20px; margin-top:10px; }
+
+/* ═══════════════════════════════════════════
+   AUDIO STUDY MODE
+═══════════════════════════════════════════ */
+.audio-sticky-player { position:sticky; top:0; z-index:45; overflow:hidden; }
+.asp-bg { position:absolute; inset:0; background:linear-gradient(160deg,#060f28 0%,#0b1f4a 50%,#162c62 100%); }
+.asp-content { position:relative; z-index:1; padding:16px 18px 14px; }
+.asp-track-info { margin-bottom:14px; }
+.asp-num { font-size:10px; font-weight:800; color:rgba(255,255,255,.45); letter-spacing:1px; text-transform:uppercase; margin-bottom:3px; }
+.asp-title { font-family:var(--font-display); font-size:19px; font-weight:800; color:white; line-height:1.2; margin-bottom:2px; }
+.asp-desc { font-size:12px; color:rgba(255,255,255,.55); font-weight:500; }
+.asp-progress-row { display:flex; align-items:center; gap:8px; margin-bottom:14px; }
+.asp-time { font-size:11px; font-weight:700; color:rgba(255,255,255,.5); min-width:32px; }
+.asp-bar { flex:1; height:6px; background:rgba(255,255,255,.15); border-radius:10px; cursor:pointer; position:relative; }
+.asp-fill { height:100%; background:linear-gradient(90deg,#3b6aff,#60a5fa); border-radius:10px; width:0%; transition:width .3s linear; }
+.asp-controls { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:12px; }
+.asp-btn { padding:9px 12px; border-radius:10px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.15); color:white; font-size:12px; font-weight:700; transition:all .2s; cursor:pointer; }
+.asp-btn:hover { background:rgba(255,255,255,.2); }
+.asp-play { width:56px; height:56px; border-radius:50%; background:white; color:var(--navy); font-size:20px; border:none; cursor:pointer; box-shadow:0 4px 20px rgba(0,0,0,.3); display:flex; align-items:center; justify-content:center; transition:all .2s; }
+.asp-play:hover { transform:scale(1.08); }
+.asp-vol-row { display:flex; align-items:center; gap:8px; }
+.asp-vol { flex:1; -webkit-appearance:none; height:4px; background:rgba(255,255,255,.2); border-radius:10px; cursor:pointer; outline:none; }
+.asp-vol::-webkit-slider-thumb { -webkit-appearance:none; width:14px; height:14px; border-radius:50%; background:white; cursor:pointer; }
+.at-item { background:white; border:1.5px solid var(--border); border-radius:var(--r-md); padding:14px 16px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:all .2s; }
+.at-item:hover { border-color:var(--blue-tint); box-shadow:var(--shadow-sm); }
+.at-item.at-active { border-color:var(--blue); background:var(--blue-pale); }
+.at-num { width:36px; height:36px; border-radius:50%; flex-shrink:0; background:var(--bg2); border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; color:var(--text3); transition:all .2s; }
+.at-item.at-active .at-num { background:var(--blue); border-color:var(--blue); color:white; }
+.at-info { flex:1; }
+.at-title { font-weight:700; font-size:14px; color:var(--navy); }
+.at-item.at-active .at-title { color:var(--blue); }
+.at-sub { font-size:12px; color:var(--text3); margin-top:2px; }
+.at-ico { font-size:18px; color:var(--text3); }
+.at-item.at-active .at-ico { color:var(--blue); }
+.eq-anim { display:flex; align-items:flex-end; gap:2px; height:18px; }
+.eq-anim span { width:3px; border-radius:2px; background:var(--blue); animation:eq .5s ease-in-out infinite alternate; }
+.eq-anim span:nth-child(1){height:6px;animation-delay:0s}
+.eq-anim span:nth-child(2){height:14px;animation-delay:.15s}
+.eq-anim span:nth-child(3){height:9px;animation-delay:.3s}
+@keyframes eq{from{transform:scaleY(.3)}to{transform:scaleY(1)}}
+
 </style>
 </head>
 <body>
@@ -1424,8 +1444,6 @@ select.form-input { appearance: none; cursor: pointer; }
 
   <!-- ══ ABOUT ══ -->
   <div id="page-chat" class="page" style="padding:16px;gap:16px">
-
-    <!-- Hero -->
     <div class="about-hero">
       <div class="about-logo-circle"><img src="logo.jpg" alt="Zenova" style="width:64px;height:64px;border-radius:16px;object-fit:contain;" onerror="this.style.display='none';this.parentElement.textContent='Z'"/></div>
       <div class="about-hero-name">Zenova</div>
@@ -1436,306 +1454,130 @@ select.form-input { appearance: none; cursor: pointer; }
         <span class="about-badge">🆓 Always Free</span>
       </div>
     </div>
-
-    <!-- Mission -->
     <div class="about-mission">
       <div class="about-section-label">Our Mission</div>
       <div class="about-mission-text">"Empowering every Nigerian student with the tools, resources, and mindset to excel — from JAMB to beyond."</div>
     </div>
-
-    <!-- Features -->
     <div>
       <div style="font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--navy);margin-bottom:12px">What Zenova Offers</div>
       <div class="about-features-grid">
-        <div class="about-feature-card">
-          <div class="about-feature-icon">🃏</div>
-          <div class="about-feature-name">Flashcards</div>
-          <div class="about-feature-desc">Create & study your own revision cards</div>
-        </div>
-        <div class="about-feature-card">
-          <div class="about-feature-icon">⏱️</div>
-          <div class="about-feature-name">Focus Timer</div>
-          <div class="about-feature-desc">Pomodoro & countdown timers to stay locked in</div>
-        </div>
-        <div class="about-feature-card">
-          <div class="about-feature-icon">📚</div>
-          <div class="about-feature-name">Free eBooks</div>
-          <div class="about-feature-desc">Curated PDFs crafted for JAMB prep</div>
-        </div>
-        <div class="about-feature-card">
-          <div class="about-feature-icon">📝</div>
-          <div class="about-feature-name">Exam Countdown</div>
-          <div class="about-feature-desc">Never miss an exam date again</div>
-        </div>
-        <div class="about-feature-card">
-          <div class="about-feature-icon">📅</div>
-          <div class="about-feature-name">Timetable</div>
-          <div class="about-feature-desc">Plan and organize your weekly study schedule</div>
-        </div>
-        <div class="about-feature-card">
-          <div class="about-feature-icon">🏆</div>
-          <div class="about-feature-name">XP & Streaks</div>
-          <div class="about-feature-desc">Stay motivated with rewards and achievements</div>
-        </div>
+        <div class="about-feature-card"><div class="about-feature-icon">🃏</div><div class="about-feature-name">Flashcards</div><div class="about-feature-desc">Create & study your own revision cards</div></div>
+        <div class="about-feature-card"><div class="about-feature-icon">⏱️</div><div class="about-feature-name">Focus Timer</div><div class="about-feature-desc">Pomodoro & countdown timers</div></div>
+        <div class="about-feature-card"><div class="about-feature-icon">⚡</div><div class="about-feature-name">Zenova Drops</div><div class="about-feature-desc">100 powerful study tips</div></div>
+        <div class="about-feature-card"><div class="about-feature-icon">🎯</div><div class="about-feature-name">JAMB Questions</div><div class="about-feature-desc">Daily past question practice</div></div>
+        <div class="about-feature-card"><div class="about-feature-icon">🎧</div><div class="about-feature-name">Audio Study</div><div class="about-feature-desc">Learn while you listen</div></div>
+        <div class="about-feature-card"><div class="about-feature-icon">🏆</div><div class="about-feature-name">XP & Streaks</div><div class="about-feature-desc">Stay motivated with rewards</div></div>
       </div>
     </div>
-
-    <!-- Social Media -->
     <div class="about-social-card">
       <div class="about-social-header">
         <div class="about-social-title">📲 Connect with Zenova</div>
         <div class="about-social-sub">Follow us for tips, updates & study motivation</div>
       </div>
-      <a class="social-link-item" href="https://instagram.com/zenovaofficial188" target="_blank">
-        <div class="social-icon-wrap soc-ig">
-          <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-        </div>
-        <div class="social-info">
-          <div class="social-name">Instagram</div>
-          <div class="social-handle">@zenovaofficial188</div>
-        </div>
+      <a class="social-link-item" href="https://www.instagram.com/zenovamedia188/" target="_blank">
+        <div class="social-icon-wrap soc-ig"><svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></div>
+        <div class="social-info"><div class="social-name">Instagram</div><div class="social-handle">@zenovamedia188</div></div>
         <span class="social-arrow">›</span>
       </a>
-      <a class="social-link-item" href="https://facebook.com/profile.php?id=61588573439813" target="_blank">
-        <div class="social-icon-wrap soc-fb">
-          <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-        </div>
-        <div class="social-info">
-          <div class="social-name">Facebook</div>
-          <div class="social-handle">Zenova Official</div>
-        </div>
+      <a class="social-link-item" href="https://web.facebook.com/profile.php?id=61588573439813" target="_blank">
+        <div class="social-icon-wrap soc-fb"><svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></div>
+        <div class="social-info"><div class="social-name">Facebook</div><div class="social-handle">Zenova Official</div></div>
         <span class="social-arrow">›</span>
       </a>
-      <a class="social-link-item" href="https://tiktok.com/@zenovaofficial188" target="_blank">
-        <div class="social-icon-wrap soc-tt">
-          <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg>
-        </div>
-        <div class="social-info">
-          <div class="social-name">TikTok</div>
-          <div class="social-handle">@zenovaofficial188</div>
-        </div>
+      <a class="social-link-item" href="https://www.tiktok.com/@zenovamedia188" target="_blank">
+        <div class="social-icon-wrap soc-tt"><svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.17 8.17 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg></div>
+        <div class="social-info"><div class="social-name">TikTok</div><div class="social-handle">@zenovamedia188</div></div>
         <span class="social-arrow">›</span>
       </a>
-      <a class="social-link-item" href="https://www.youtube.com/@Zenovaofficial188" target="_blank">
-        <div class="social-icon-wrap soc-yt">
-          <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        </div>
-        <div class="social-info">
-          <div class="social-name">YouTube</div>
-          <div class="social-handle">@Zenovaofficial188</div>
-        </div>
+      <a class="social-link-item" href="https://www.youtube.com/@Zenovamedia188" target="_blank">
+        <div class="social-icon-wrap soc-yt"><svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></div>
+        <div class="social-info"><div class="social-name">YouTube</div><div class="social-handle">@Zenovamedia188</div></div>
         <span class="social-arrow">›</span>
       </a>
       <a class="social-link-item" href="https://emmanueljohndev17-afk.github.io/ZENOVAMAIN/" target="_blank">
-        <div class="social-icon-wrap soc-web">
-          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="22" height="22"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
-        </div>
-        <div class="social-info">
-          <div class="social-name">Website</div>
-          <div class="social-handle">https://emmanueljohndev17-afk.github.io/ZENOVAMAIN/</div>
-        </div>
+        <div class="social-icon-wrap soc-web"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="22" height="22"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
+        <div class="social-info"><div class="social-name">Website</div><div class="social-handle">Zenova Official Site</div></div>
         <span class="social-arrow">›</span>
       </a>
       <a class="social-link-item" href="mailto:zenovaofficial188@gmail.com">
-        <div class="social-icon-wrap soc-mail">
-          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="22" height="22"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        </div>
-        <div class="social-info">
-          <div class="social-name">Email Us</div>
-          <div class="social-handle">zenovaofficial188@gmail.com</div>
-        </div>
+        <div class="social-icon-wrap soc-mail"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="22" height="22"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <div class="social-info"><div class="social-name">Email</div><div class="social-handle">zenovaofficial188@gmail.com</div></div>
         <span class="social-arrow">›</span>
       </a>
       <a class="social-link-item" href="https://whatsapp.com/channel/0029VbCH1j60wak1HKVmfG3I" target="_blank">
-        <div class="social-icon-wrap" style="background:linear-gradient(135deg,#25d366,#128c7e)">
-          <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        </div>
-        <div class="social-info">
-          <div class="social-name">WhatsApp Channel</div>
-          <div class="social-handle">Join our study community</div>
-        </div>
+        <div class="social-icon-wrap" style="background:linear-gradient(135deg,#25d366,#128c7e)"><svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></div>
+        <div class="social-info"><div class="social-name">WhatsApp Channel</div><div class="social-handle">Join our study community</div></div>
         <span class="social-arrow">›</span>
       </a>
     </div>
-
-    <!-- Footer -->
     <div class="about-footer-note">Made with ❤️ for Nigerian students · Zenova © 2025</div>
-
   </div>
 
-  <!-- ══ EBOOK LIBRARY ══ -->
-  <div id="page-library" class="page">
-
-    <div class="card lib-hero">
-      <div class="lib-hero-title">📚 Zenova Library</div>
-      <div class="lib-hero-sub">Free eBooks crafted by Zenova to help you study smarter and win bigger</div>
-      <div class="lib-stats">
-        <div class="lib-stat"><div class="lib-stat-val">5</div><div class="lib-stat-lbl">eBooks</div></div>
-        <div class="lib-stat"><div class="lib-stat-val">Free</div><div class="lib-stat-lbl">Always</div></div>
-        <div class="lib-stat"><div class="lib-stat-val">PDF</div><div class="lib-stat-lbl">Format</div></div>
-        <div class="lib-stat"><div class="lib-stat-val">126+</div><div class="lib-stat-lbl">Pages</div></div>
+  <!-- ══ LEARN PAGE ══ -->
+  <div id="page-library" class="page" style="padding:0;gap:0;">
+    <div class="learn-header">
+      <div class="learn-tabs">
+        <button class="learn-tab active" onclick="switchLearnTab('drops',this)"><span>⚡</span> Zenova Drops</button>
+        <button class="learn-tab" onclick="switchLearnTab('qotd',this)"><span>🎯</span> JAMB Q</button>
+        <button class="learn-tab" onclick="switchLearnTab('reality',this)"><span>🔥</span> Reality</button>
       </div>
     </div>
+    <div id="learn-drops" class="learn-panel active">
+      <div class="drops-filter-wrap">
+        <div class="drops-filter-row">
+          <button class="drops-chip active" onclick="filterDrops('all',this)">All</button>
+          <button class="drops-chip" onclick="filterDrops('study',this)">📖 Study</button>
+          <button class="drops-chip" onclick="filterDrops('focus',this)">🎯 Focus</button>
+          <button class="drops-chip" onclick="filterDrops('exam',this)">📝 Exam</button>
+          <button class="drops-chip" onclick="filterDrops('mindset',this)">💪 Mindset</button>
+        </div>
+      </div>
+      <div id="drops-feed" class="drops-feed"></div>
+    </div>
+    <div id="learn-qotd" class="learn-panel">
+      <div class="qotd-wrap" id="qotd-wrap"></div>
+    </div>
+    <div id="learn-reality" class="learn-panel">
+      <div class="reality-wrap" id="reality-wrap"></div>
+    </div>
+  </div>
 
-    <div class="card share-banner">
-      <div class="share-title">🚀 Share Zenova with Friends</div>
-      <div class="share-sub">Help your study buddies discover Zenova — studying is better together!</div>
-      <div class="share-circle-btns">
-        <div class="share-circle-wrap" onclick="shareWhatsApp()">
-          <div class="share-circle whatsapp-circle">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="26" height="26"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.122.554 4.118 1.528 5.852L0 24l6.335-1.51A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.013-1.375l-.36-.213-3.728.888.916-3.618-.235-.372A9.818 9.818 0 1112 21.818z"/></svg>
+  <!-- ══ AUDIO STUDY MODE ══ -->
+  <div id="page-audio" class="page" style="padding:0;gap:0;background:var(--bg)">
+    <div class="audio-sticky-player">
+      <div class="asp-bg"></div>
+      <div class="asp-content">
+        <div class="asp-track-info">
+          <div class="asp-num" id="asp-num">🎧 Audio Study Mode</div>
+          <div class="asp-title" id="asp-title">Tap a track below to start</div>
+          <div class="asp-desc" id="asp-desc">Study with your ears — 20 sessions</div>
+        </div>
+        <div class="asp-progress-row">
+          <span class="asp-time" id="asp-cur">0:00</span>
+          <div class="asp-bar" id="asp-bar" onclick="audioSeek(event)">
+            <div class="asp-fill" id="asp-fill"></div>
           </div>
-          <div class="share-circle-lbl">WhatsApp</div>
+          <span class="asp-time" id="asp-total">0:00</span>
         </div>
-        <div class="share-circle-wrap" onclick="shareTwitter()">
-          <div class="share-circle twitter-circle">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.259 5.629 5.905-5.629zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-          </div>
-          <div class="share-circle-lbl">Twitter / X</div>
+        <div class="asp-controls">
+          <button class="asp-btn" onclick="audioPrev()">⏮</button>
+          <button class="asp-btn" onclick="audioSkipBack()">⏪ 10s</button>
+          <button class="asp-play" id="asp-play" onclick="audioToggle()">▶</button>
+          <button class="asp-btn" onclick="audioSkipFwd()">10s ⏩</button>
+          <button class="asp-btn" onclick="audioNext()">⏭</button>
         </div>
-        <div class="share-circle-wrap" onclick="shareInstagram()">
-          <div class="share-circle instagram-circle">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-          </div>
-          <div class="share-circle-lbl">Instagram</div>
-        </div>
-        <div class="share-circle-wrap" onclick="copyLink()">
-          <div class="share-circle copy-circle">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="22" height="22"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          </div>
-          <div class="share-circle-lbl">Copy Link</div>
+        <div class="asp-vol-row">
+          <span style="font-size:13px">🔈</span>
+          <input type="range" class="asp-vol" min="0" max="1" step="0.05" value="1" oninput="audioVol(this.value)"/>
+          <span style="font-size:13px">🔊</span>
         </div>
       </div>
     </div>
-
-    <!-- 5 eBooks -->
-    <div class="ebook-card">
-      <div class="ebook-spine" style="background:linear-gradient(160deg,#0b1f4a,#2354e6);">
-        <div class="ebook-spine-icon">📖</div>
-        <div class="ebook-spine-num">01</div>
-      </div>
-      <div class="ebook-content">
-        <div class="ebook-meta">18 Pages · JAMB Prep · Free</div>
-        <div class="ebook-title">5 Things That Can Make You Fail JAMB & How to Fix Them</div>
-        <div class="ebook-desc-short">The 5 critical mistakes that silently destroy JAMB scores — and the exact fixes with a 60-day study plan.</div>
-        <div class="ebook-badge-row">
-          <span class="ebook-badge-pill" style="background:#fef3c7;color:#b45309">JAMB Prep</span>
-          <span class="ebook-badge-pill" style="background:#dcfce7;color:#15803d">Score 300+</span>
-          <span class="ebook-badge-pill" style="background:#f5a623;color:white">JAMB</span>
-        </div>
-        <div class="ebook-btn-row">
-          <button class="btn-read" onclick="openPDF('pdf1','5 Things That Can Make You Fail JAMB & How to Fix Them')">▶ Read Now</button>
-          <button class="btn-dl" onclick="downloadPDF('pdf1','5_Things_Fail_JAMB_Zenova.pdf')" title="Download PDF">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          </button>
-        </div>
-      </div>
+    <div style="padding:14px 16px 8px;">
+      <div style="font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--navy);margin-bottom:10px">🎵 All 20 Tracks — Tap to Play</div>
+      <div id="audio-tracklist" style="display:flex;flex-direction:column;gap:8px;padding-bottom:20px;"></div>
     </div>
-    <div class="ebook-card">
-      <div class="ebook-spine" style="background:linear-gradient(160deg,#1e3d80,#7c3aed);">
-        <div class="ebook-spine-icon">🏆</div>
-        <div class="ebook-spine-num">02</div>
-      </div>
-      <div class="ebook-content">
-        <div class="ebook-meta">14 Pages · Exam Technique · Free</div>
-        <div class="ebook-title">5 Ways to Answer JAMB Questions Like a Pro</div>
-        <div class="ebook-desc-short">Proven strategies top scorers use — eliminate wrong answers, manage time perfectly and score 300+.</div>
-        <div class="ebook-badge-row">
-          <span class="ebook-badge-pill" style="background:#ede9fe;color:#7c3aed">Technique</span>
-          <span class="ebook-badge-pill" style="background:#dbeafe;color:#1d4ed8">Time Mgmt</span>
-          <span class="ebook-badge-pill" style="background:#10b981;color:white">GUIDE</span>
-        </div>
-        <div class="ebook-btn-row">
-          <button class="btn-read" onclick="openPDF('pdf2','5 Ways to Answer JAMB Questions Like a Pro')">▶ Read Now</button>
-          <button class="btn-dl" onclick="downloadPDF('pdf2','5_Ways_JAMB_Zenova.pdf')" title="Download PDF">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="ebook-card">
-      <div class="ebook-spine" style="background:linear-gradient(160deg,#0b1f4a,#162c62);">
-        <div class="ebook-spine-icon">⚡</div>
-        <div class="ebook-spine-num">03</div>
-      </div>
-      <div class="ebook-content">
-        <div class="ebook-meta">45 Pages · Productivity · Free</div>
-        <div class="ebook-title">Atomic Productivity for Students</div>
-        <div class="ebook-desc-short">Study Less. Achieve More. Deep focus, anti-procrastination, unbreakable routines and exam mastery.</div>
-        <div class="ebook-badge-row">
-          <span class="ebook-badge-pill" style="background:#fef3c7;color:#b45309">Deep Work</span>
-          <span class="ebook-badge-pill" style="background:#dcfce7;color:#15803d">Routines</span>
-          <span class="ebook-badge-pill" style="background:#f5a623;color:white">BESTSELLER</span>
-        </div>
-        <div class="ebook-btn-row">
-          <button class="btn-read" onclick="openPDF('pdf3','Atomic Productivity for Students')">▶ Read Now</button>
-          <button class="btn-dl" onclick="downloadPDF('pdf3','Atomic_Productivity_Zenova.pdf')" title="Download PDF">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="ebook-card">
-      <div class="ebook-spine" style="background:linear-gradient(160deg,#0f172a,#1e3a5f);">
-        <div class="ebook-spine-icon">💻</div>
-        <div class="ebook-spine-num">04</div>
-      </div>
-      <div class="ebook-content">
-        <div class="ebook-meta">60 Pages · Africa Edition · Free</div>
-        <div class="ebook-title">Digital Skills That Pay in 2026</div>
-        <div class="ebook-desc-short">How Nigerian students learn high-income skills — Design, Video, Copywriting, AI — and earn online in 90 days.</div>
-        <div class="ebook-badge-row">
-          <span class="ebook-badge-pill" style="background:#fee2e2;color:#b91c1c">Freelancing</span>
-          <span class="ebook-badge-pill" style="background:#dcfce7;color:#15803d">Nigeria</span>
-          <span class="ebook-badge-pill" style="background:#ef4444;color:white">HOT 🔥</span>
-        </div>
-        <div class="ebook-btn-row">
-          <button class="btn-read" onclick="openPDF('pdf4','Digital Skills That Pay in 2026')">▶ Read Now</button>
-          <button class="btn-dl" onclick="downloadPDF('pdf4','Digital_Skills_2026_Zenova.pdf')" title="Download PDF">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="ebook-card">
-      <div class="ebook-spine" style="background:linear-gradient(160deg,#065f46,#0b1f4a);">
-        <div class="ebook-spine-icon">🎯</div>
-        <div class="ebook-spine-num">05</div>
-      </div>
-      <div class="ebook-content">
-        <div class="ebook-meta">13 Pages · Student System · Free</div>
-        <div class="ebook-title">Study Smarter, Win Bigger</div>
-        <div class="ebook-desc-short">The Zenova Student System — study strategy, productivity, exam mastery, discipline and a 7-day action plan.</div>
-        <div class="ebook-badge-row">
-          <span class="ebook-badge-pill" style="background:#ede9fe;color:#7c3aed">Study System</span>
-          <span class="ebook-badge-pill" style="background:#dbeafe;color:#1d4ed8">7-Day Plan</span>
-          <span class="ebook-badge-pill" style="background:#7c3aed;color:white">OFFICIAL</span>
-        </div>
-        <div class="ebook-btn-row">
-          <button class="btn-read" onclick="openPDF('pdf5','Study Smarter, Win Bigger')">▶ Read Now</button>
-          <button class="btn-dl" onclick="downloadPDF('pdf5','Study_Smarter_Win_Bigger_Zenova.pdf')" title="Download PDF">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" style="text-align:center;padding:26px 20px">
-      <div style="font-size:32px;margin-bottom:10px">🔜</div>
-      <div class="section-title" style="margin-bottom:5px">More eBooks Coming Soon</div>
-      <div class="section-sub">Follow <strong>@zenovaofficial188</strong> on Instagram & TikTok for new releases</div>
-    </div>
-
-  </div><!-- /library -->
-
-  <!-- PDF Viewer Modal -->
-  <div id="pdf-modal" class="pdf-modal-overlay">
-    <div class="pdf-modal-header">
-      <span class="pdf-modal-title" id="pdf-modal-title">eBook</span>
-      <button class="pdf-modal-dl" id="pdf-modal-dl-btn" onclick="downloadCurrentPDF()">⬇ Download</button>
-      <button class="pdf-modal-close" onclick="closePDF()">✕</button>
-    </div>
-    <iframe id="pdf-frame" class="pdf-frame"></iframe>
+    <audio id="za" preload="none"></audio>
   </div>
 
   <!-- BOTTOM NAV -->
@@ -1746,8 +1588,13 @@ select.form-input { appearance: none; cursor: pointer; }
       <div class="nav-active-pill"></div>
     </button>
     <button class="nav-item" onclick="showPage('library')" id="nav-library">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-      Library
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      Learn
+      <div class="nav-active-pill"></div>
+    </button>
+    <button class="nav-item" onclick="showPage('audio')" id="nav-audio">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+      Audio
       <div class="nav-active-pill"></div>
     </button>
     <button class="nav-item" onclick="showPage('progress')" id="nav-progress">
@@ -2070,22 +1917,8 @@ function refreshAll() {
 /* ════════════════════════════════════════════════
    NAVIGATION
 ════════════════════════════════════════════════ */
-const NAV_PAGES = ['dashboard','library','progress'];
 
-function showPage(page) {
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  const el = document.getElementById('page-'+page);
-  if(el) el.classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  if(NAV_PAGES.includes(page)) document.getElementById('nav-'+page)?.classList.add('active');
-  if(page==='progress')   { renderProgress(); renderAchievements(); }
-  if(page==='dashboard')  { renderDashboard(); }
-  if(page==='flashcards') { renderFlashcards(); }
-  if(page==='exams')      { renderExams(); }
-  if(page==='timetable')  { renderTimetable(); }
-  if(page==='profile')    { renderProfile(); }
-  window.scrollTo(0,0);
-}
+
 
 /* ════════════════════════════════════════════════
    GREETING & STREAK
@@ -2442,6 +2275,12 @@ function showTyping(){
 }
 function hideTyping(){document.getElementById('typing-indicator')?.remove();}
 
+
+async function callClaude(){
+  const msgs = [{role:"user", content: buildSystemPrompt()}, ...chatHistory];
+  const response = await puter.ai.chat(msgs, {model:"claude-haiku-4-5-20251001"});
+  return response?.message?.content?.[0]?.text || response?.text || "I had trouble responding. Please try again.";
+}
 async function sendChat(){
   const input=document.getElementById('chat-input');
   const msg=input.value.trim();
@@ -2464,14 +2303,9 @@ async function sendChat(){
 }
 
 async function callClaude(){
-  const systemMsg = buildSystemPrompt();
-  const msgs = [
-    {role:'user', content: systemMsg + '\n\nPlease acknowledge you are ready to help as Zen.'},
-    {role:'assistant', content: 'Hi! I am Zen, your AI study tutor. Ready to help you ace your exams!'},
-    ...chatHistory
-  ];
-  const response = await puter.ai.chat(msgs, {model:'claude-haiku-4-5-20251001'});
-  return response?.message?.content?.[0]?.text || response?.text || 'I had trouble responding. Please try again.';
+  const msgs = [{role:"user", content: buildSystemPrompt()}, ...chatHistory];
+  const response = await puter.ai.chat(msgs, {model:"claude-haiku-4-5-20251001"});
+  return response?.message?.content?.[0]?.text || response?.text || "I had trouble responding. Please try again.";
 }
 
 /* ════════════════════════════════════════════════
@@ -2671,6 +2505,423 @@ function copyLink() {
 ════════════════════════════════════════════════ */
 function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
 function esc(s){if(!s)return'';const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+
+/* ════════════════════════════════════════════════
+   NAVIGATION (updated)
+════════════════════════════════════════════════ */
+const NAV_PAGES = ['dashboard','library','progress','audio'];
+
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const el = document.getElementById('page-'+page);
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(NAV_PAGES.includes(page)) document.getElementById('nav-'+page)?.classList.add('active');
+  if(page==='progress')   { renderProgress(); renderAchievements(); }
+  if(page==='dashboard')  { renderDashboard(); }
+  if(page==='flashcards') { renderFlashcards(); }
+  if(page==='exams')      { renderExams(); }
+  if(page==='timetable')  { renderTimetable(); }
+  if(page==='profile')    { renderProfile(); }
+  if(page==='library')    { renderDrops(); }
+  if(page==='audio')      { initAudioPage(); }
+  window.scrollTo(0,0);
+}
+
+/* ════════════════════════════════════════════════
+   LEARN PAGE
+════════════════════════════════════════════════ */
+const DROPS = [
+  {cat:"study", text:"Active recall beats re-reading every time. Close the book and test yourself."},
+  {cat:"study", text:"Spaced repetition is science. Review notes after 1 day, 3 days, 7 days, 14 days."},
+  {cat:"study", text:"The Feynman Technique: explain any concept as if teaching a 10-year-old. Gaps appear fast."},
+  {cat:"study", text:"Study in 45-minute blocks. Your brain absorbs more in focused bursts than marathon sessions."},
+  {cat:"study", text:"Write summaries by hand. The act of writing locks information into long-term memory."},
+  {cat:"study", text:"Do not highlight everything. Highlight only the one sentence per paragraph that matters most."},
+  {cat:"study", text:"Before reading a chapter, scan the headings. Your brain primes itself to absorb the content."},
+  {cat:"study", text:"Cornell Notes method: questions on the left, notes on the right, summary at the bottom."},
+  {cat:"study", text:"Practice past questions more than you read textbooks. Exams test application, not memory."},
+  {cat:"study", text:"Teach what you have learned out loud to yourself, a mirror, or a friend. It reveals everything."},
+  {cat:"study", text:"Study the hardest subject first, when your energy and focus are at their peak."},
+  {cat:"study", text:"Use mind maps to connect ideas. Seeing the big picture improves recall of the details."},
+  {cat:"study", text:"Read your notes within 24 hours of class. You retain 60% more that way."},
+  {cat:"study", text:"One topic per session. Mixing subjects in one sitting reduces how much you retain."},
+  {cat:"study", text:"Use flashcards for definitions and formulas. Physical cards beat scrolling through a phone."},
+  {cat:"study", text:"Solve 10 practice problems per topic before moving on. Understanding comes through doing."},
+  {cat:"study", text:"Record yourself explaining a topic and play it back. You will immediately know what you missed."},
+  {cat:"study", text:"Group study works only if everyone is prepared. Show up knowing something to contribute."},
+  {cat:"study", text:"Study the same material in different formats: notes, videos, diagrams. Each adds a layer."},
+  {cat:"study", text:"Set a specific goal per session: finish Chapter 3 questions beats just saying you will study."},
+  {cat:"study", text:"If you are confused, do not skip it. Confused pages are the pages that show up in exams."},
+  {cat:"study", text:"Use colour-coding in your notes. Red for warnings, blue for definitions, green for formulas."},
+  {cat:"study", text:"Interleaved practice: mix different problem types in one session. It feels harder but works better."},
+  {cat:"study", text:"Do not multitask while studying. Every distraction costs you 15 minutes of lost focus."},
+  {cat:"study", text:"Sleep is the most underrated study tool. Memory consolidates while you sleep. Do not skip it."},
+  {cat:"focus", text:"Turn your phone face-down and put it across the room. Out of sight, out of mind."},
+  {cat:"focus", text:"Your study environment shapes your output. A clean desk equals a clear mind."},
+  {cat:"focus", text:"Start with the task you have been avoiding most. Do it first. Everything else feels easy after."},
+  {cat:"focus", text:"Set a timer for 25 minutes and work with zero interruptions. The Pomodoro method is real."},
+  {cat:"focus", text:"Discipline is choosing your future over your comfort right now. Make that choice every day."},
+  {cat:"focus", text:"Say no to unnecessary hangouts during exam season. Your friends will still be there after."},
+  {cat:"focus", text:"Build a study ritual: same time, same place, same playlist. Your brain will lock in faster."},
+  {cat:"focus", text:"Stop waiting to feel motivated. Start working. Motivation follows action, not the other way."},
+  {cat:"focus", text:"Social media is designed to steal your time. Log out before you sit down to study."},
+  {cat:"focus", text:"One hour of deep work beats four hours of distracted studying. Quality over quantity."},
+  {cat:"focus", text:"Write your study plan the night before. Decision fatigue is real. Eliminate it in advance."},
+  {cat:"focus", text:"Study in silence at least 3 times a week. Train your brain to focus without stimulation."},
+  {cat:"focus", text:"Every minute you procrastinate is a minute your competition is using. Think about that."},
+  {cat:"focus", text:"If your phone is in your hand, you are not studying. Period."},
+  {cat:"focus", text:"Your peers habits will shape yours. Spend time around people who take their future seriously."},
+  {cat:"focus", text:"Make your bed every morning. Small discipline breeds big discipline over time."},
+  {cat:"focus", text:"Treat your study time like a job you cannot be late to. Show up. Every day."},
+  {cat:"focus", text:"Rest strategically. Short breaks sharpen focus. Be strict about when break time ends."},
+  {cat:"focus", text:"Remove apps that pull you in during study hours. Temporary sacrifice, permanent results."},
+  {cat:"focus", text:"When focus breaks, take a 2-minute walk, then come straight back."},
+  {cat:"focus", text:"Track your daily study hours. What gets measured gets improved."},
+  {cat:"focus", text:"Two hours of focused study every night is 14 hours a week. That is transformation."},
+  {cat:"focus", text:"The student who shows up consistently will always outperform the student who only crammed."},
+  {cat:"focus", text:"Protect your study time like it is money. Because in the long run, it is."},
+  {cat:"focus", text:"You do not need perfect conditions to study. You just need to start."},
+  {cat:"exam", text:"Read every question twice before answering. Most wrong answers come from misreading."},
+  {cat:"exam", text:"Attempt every question. A blank answer is always wrong. A guess has a chance."},
+  {cat:"exam", text:"In multiple choice, eliminate 2 wrong answers first. Your odds jump from 25% to 50%."},
+  {cat:"exam", text:"Manage your time: spend 1 minute per mark. Do not bleed time on one hard question."},
+  {cat:"exam", text:"For JAMB, skip and return. Do not get stuck. Mark uncertain questions and come back."},
+  {cat:"exam", text:"Start with the questions you are most confident about. Build momentum then tackle the hard ones."},
+  {cat:"exam", text:"Underline keywords in each question. They tell you exactly what the examiner wants."},
+  {cat:"exam", text:"Check your answer sheet 5 minutes before time is up. Transfer errors are fatal."},
+  {cat:"exam", text:"Never change an answer unless you are 100% certain. First instincts are usually right."},
+  {cat:"exam", text:"Know your common formulas by heart. A forgotten formula in an exam cannot be Googled."},
+  {cat:"exam", text:"In calculation questions, show all working. Partial marks exist and they can save you."},
+  {cat:"exam", text:"Past questions reveal patterns. The same concepts appear year after year in different forms."},
+  {cat:"exam", text:"Practice under exam conditions: time yourself, no notes, no phone, full silence."},
+  {cat:"exam", text:"Eat something light before an exam. Your brain runs on glucose. Do not go in empty."},
+  {cat:"exam", text:"Sleep the night before the exam. Cramming at 2am will hurt more than help."},
+  {cat:"exam", text:"Arrive at the exam venue early. Panic from rushing in late destroys performance."},
+  {cat:"exam", text:"For theory questions: define, explain, give an example. That structure earns full marks."},
+  {cat:"exam", text:"If you blank on a question, write what you know and move on. Partial knowledge earns partial marks."},
+  {cat:"exam", text:"Know the difference between describe, explain, and evaluate. Each demands a different answer."},
+  {cat:"exam", text:"Review your JAMB syllabus. Questions stay within it. Topics outside it are wasted study time."},
+  {cat:"exam", text:"Neatness counts. Examiners mark faster when they can read your writing clearly."},
+  {cat:"exam", text:"Do not panic when others finish before you. Speed does not equal correctness."},
+  {cat:"exam", text:"The last 10 minutes of an exam are for checking. Never for starting new questions."},
+  {cat:"exam", text:"Confidence is a strategy. Walk in knowing you have prepared. Belief changes outcomes."},
+  {cat:"mindset", text:"You are not behind. You are exactly where your effort has placed you. Change the effort."},
+  {cat:"mindset", text:"Every expert was once a beginner who refused to quit. Keep going."},
+  {cat:"mindset", text:"Your current situation is not your final destination. Study as if your life depends on it."},
+  {cat:"mindset", text:"Failure in an exam is not failure in life. It is data. Use it to improve."},
+  {cat:"mindset", text:"The student who studies consistently beats the genius who only shows up occasionally."},
+  {cat:"mindset", text:"Comparison is the thief of motivation. Run your own race."},
+  {cat:"mindset", text:"Hard chapters are not signs you are stupid. They are signs you are growing."},
+  {cat:"mindset", text:"One good study session can shift the trajectory of your entire week."},
+  {cat:"mindset", text:"You do not have to be the smartest. You have to be the most consistent."},
+  {cat:"mindset", text:"Your parents are investing in your future. The least you can do is invest your time."},
+  {cat:"mindset", text:"The day you decide to take your education seriously is the day your future changes."},
+  {cat:"mindset", text:"Stop saying you are not a maths person. That is a story. Effort rewrites every story."},
+  {cat:"mindset", text:"The discomfort you feel while studying is the feeling of growth. Lean into it."},
+  {cat:"mindset", text:"Small progress is still progress. A page studied is better than a page avoided."},
+  {cat:"mindset", text:"Celebrate consistency, not just results. Showing up every day is a win."},
+  {cat:"mindset", text:"Your JAMB score will reflect your preparation. Not your potential. Your preparation."},
+  {cat:"mindset", text:"Discipline today is freedom tomorrow. What you sacrifice now, you gain later."},
+  {cat:"mindset", text:"Nobody is coming to save you. Your grades, your effort, your future are all yours to own."},
+  {cat:"mindset", text:"The goal is not to be perfect. The goal is to be better than you were yesterday."},
+  {cat:"mindset", text:"Laziness feels good for an hour. Regret lasts for years. Choose discomfort now."},
+  {cat:"mindset", text:"Every time you choose to study instead of scroll, you choose your future over your present."},
+  {cat:"mindset", text:"Dream big but study bigger. Vision without work is just a wish."},
+  {cat:"mindset", text:"The version of you that passes with distinction is already there. Discipline reveals them."},
+  {cat:"mindset", text:"Your environment does not define your destination. Your decisions do."},
+  {cat:"mindset", text:"One year of serious study can rewrite the next 40 years of your life. That is the trade."},
+];
+
+const QOTD = [
+  {day:1,  subj:"Mathematics", q:"If 2x - 3 = 7, find x.", a:"x = 5"},
+  {day:2,  subj:"English",     q:"Choose the correct spelling: A) Accomodate  B) Accommodate  C) Acommodate", a:"B) Accommodate"},
+  {day:3,  subj:"Chemistry",   q:"Which of these is a noble gas? A) Chlorine  B) Nitrogen  C) Argon  D) Oxygen", a:"C) Argon"},
+  {day:4,  subj:"Physics",     q:"The unit of electrical resistance is the: A) Volt  B) Ohm  C) Watt  D) Ampere", a:"B) Ohm"},
+  {day:5,  subj:"Biology",     q:"Which blood group is the universal donor? A) AB  B) B  C) A  D) O", a:"D) O"},
+  {day:6,  subj:"Mathematics", q:"Find the simple interest on N5000 at 4% per annum for 3 years.", a:"N600"},
+  {day:7,  subj:"English",     q:"Identify the figure of speech: He is as brave as a lion.", a:"Simile"},
+  {day:8,  subj:"Chemistry",   q:"The process of converting a liquid to gas by heating is called:", a:"Vaporization / Evaporation"},
+  {day:9,  subj:"Physics",     q:"A body is in equilibrium when the resultant force on it is:", a:"Zero"},
+  {day:10, subj:"Biology",     q:"The basic unit of life is the: A) Tissue  B) Organ  C) Cell  D) System", a:"C) Cell"},
+  {day:11, subj:"Mathematics", q:"Factorize: x squared + 5x + 6", a:"(x + 2)(x + 3)"},
+  {day:12, subj:"English",     q:"What is the plural of ox?", a:"Oxen"},
+  {day:13, subj:"Chemistry",   q:"What is the valency of Oxygen?", a:"2"},
+  {day:14, subj:"Physics",     q:"Which is a vector quantity? A) Speed  B) Mass  C) Velocity  D) Temperature", a:"C) Velocity"},
+  {day:15, subj:"Biology",     q:"Photosynthesis takes place in which part of the plant cell?", a:"Chloroplast"},
+  {day:16, subj:"Mathematics", q:"Convert 0.375 to a fraction in its lowest terms.", a:"3/8"},
+  {day:17, subj:"English",     q:"She RUNS every morning. What tense is this?", a:"Simple present tense"},
+  {day:18, subj:"Chemistry",   q:"What is the chemical formula for sulphuric acid?", a:"H2SO4"},
+  {day:19, subj:"Physics",     q:"What is the SI unit of power?", a:"Watt (W)"},
+  {day:20, subj:"Biology",     q:"Which organ filters blood in the human body?", a:"Kidney"},
+  {day:21, subj:"Mathematics", q:"If a = 3 and b = -2, find the value of 2a - 3b.", a:"12"},
+  {day:22, subj:"English",     q:"Which is grammatically correct? A) He don't know  B) He doesn't know  C) He do not knows", a:"B) He doesn't know"},
+  {day:23, subj:"Chemistry",   q:"Rusting of iron is an example of which type of reaction?", a:"Oxidation"},
+  {day:24, subj:"Physics",     q:"The image formed by a plane mirror is: A) Real and inverted  B) Virtual and erect  C) Real and erect", a:"B) Virtual and erect"},
+  {day:25, subj:"Biology",     q:"Which part of the brain controls balance and coordination?", a:"Cerebellum"},
+  {day:26, subj:"Mathematics", q:"Evaluate: log base 10 of 1000.", a:"3"},
+  {day:27, subj:"English",     q:"What part of speech is 'quickly' in: He ran quickly?", a:"Adverb"},
+  {day:28, subj:"Chemistry",   q:"Which gas is produced when sodium reacts with water?", a:"Hydrogen"},
+  {day:29, subj:"Physics",     q:"What happens to volume if pressure is doubled at constant temperature?", a:"Volume is halved (Boyle's Law)"},
+  {day:30, subj:"Biology",     q:"The process by which plants lose water through their leaves is called:", a:"Transpiration"},
+  {day:31, subj:"Mathematics", q:"A car travels 120km in 2 hours. What is its average speed?", a:"60 km/h"},
+  {day:32, subj:"English",     q:"Choose the correct word: The news (is/are) interesting.", a:"is"},
+  {day:33, subj:"Chemistry",   q:"Which element has the symbol Na?", a:"Sodium"},
+  {day:34, subj:"Physics",     q:"What type of energy is stored in a stretched rubber band?", a:"Elastic potential energy"},
+  {day:35, subj:"Biology",     q:"How many pairs of chromosomes does a normal human cell contain?", a:"23 pairs (46 chromosomes)"},
+  {day:36, subj:"Mathematics", q:"Solve the inequality: 3x - 1 > 8.", a:"x > 3"},
+  {day:37, subj:"English",     q:"What is the synonym of benevolent?", a:"Kind / Generous / Charitable"},
+  {day:38, subj:"Chemistry",   q:"What is the pH range of a base?", a:"8 to 14"},
+  {day:39, subj:"Physics",     q:"Which colour of light has the highest frequency?", a:"Violet"},
+  {day:40, subj:"Biology",     q:"Which vitamin is important for clotting of blood?", a:"Vitamin K"},
+  {day:41, subj:"Mathematics", q:"Find the mean of: 4, 7, 8, 9, 12.", a:"8"},
+  {day:42, subj:"English",     q:"She was tired. She still finished her work. Join with a conjunction.", a:"Although she was tired, she still finished her work."},
+  {day:43, subj:"Chemistry",   q:"What is the product when magnesium burns in oxygen?", a:"Magnesium oxide (MgO)"},
+  {day:44, subj:"Physics",     q:"An object of mass 5kg is lifted 3m high. Find its potential energy. (g=10)", a:"150 Joules"},
+  {day:45, subj:"Biology",     q:"Which part of the flower contains pollen grains?", a:"Anther"},
+  {day:46, subj:"Mathematics", q:"What is the sum of angles in a triangle?", a:"180 degrees"},
+  {day:47, subj:"English",     q:"Correct the error: Between you and I, this is wrong.", a:"Between you and me, this is wrong."},
+  {day:48, subj:"Chemistry",   q:"Which of these is a mixture? A) Water  B) Salt  C) Air  D) Iron", a:"C) Air"},
+  {day:49, subj:"Physics",     q:"What is the relationship between frequency and wavelength of a wave?", a:"They are inversely proportional"},
+  {day:50, subj:"Biology",     q:"Name the hormone responsible for regulating blood sugar levels.", a:"Insulin"},
+];
+
+const REALITY_CHECKS = [
+  "You said you will study. Why are you still scrolling?",
+  "The exam does not care about your excuses. Start now.",
+  "Every hour you waste is an hour your competition is using.",
+  "You can sleep after JAMB. Right now, open that textbook.",
+  "Comfort today, regret tomorrow. Your choice.",
+  "Your dream school will not accept I was busy watching videos.",
+  "Nobody who passed 300+ in JAMB did it by procrastinating.",
+  "You already know what you need to do. Stop stalling.",
+  "Blaming your school will not change your result. Your effort will.",
+  "That show can wait. Your future cannot.",
+  "The student who studies tonight will outscore you tomorrow.",
+  "Stop telling people you will start Monday. Monday is now.",
+  "You have the same 24 hours as every student who passed before you.",
+  "Being smart means nothing if you refuse to show up consistently.",
+  "If you are reading this instead of studying, this message is for you.",
+  "Procrastination is just fear wearing comfortable clothes. Face it.",
+  "One more year of secondary school content is not that hard. Push.",
+  "Your parents did not sacrifice for you to sit and scroll all day.",
+  "A distracted mind in an exam hall is the most expensive mistake you will ever make.",
+  "Success in JAMB is boring to watch. It is just showing up, daily, without applause.",
+  "The fact that you keep putting it off means you already know it matters.",
+  "You are not tired. You are bored. Make it interesting and get back to work.",
+  "Nobody is coming to cheer you on while you study. Do it anyway.",
+  "Stop checking your phone every 5 minutes. Your messages can wait.",
+  "The version of you that passed already exists. They just studied more.",
+  "Discipline is what separates the students who wish from those who achieve.",
+  "You do not need to be motivated. You need to be committed.",
+  "You have been about to start for 3 days. The chapter is still waiting.",
+  "If your grades embarrass you, let that feeling be the fuel, not the excuse.",
+  "One focused hour now is worth more than five lazy ones later. Choose wisely.",
+];
+
+let currentDropFilter = 'all';
+
+function switchLearnTab(tab, btn) {
+  document.querySelectorAll('.learn-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.learn-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('learn-'+tab).classList.add('active');
+  if(tab==='drops')   renderDrops();
+  if(tab==='qotd')    renderQOTD();
+  if(tab==='reality') renderReality();
+}
+
+function filterDrops(cat, btn) {
+  currentDropFilter = cat;
+  document.querySelectorAll('.drops-chip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  renderDrops();
+}
+
+function renderDrops() {
+  const feed = document.getElementById('drops-feed');
+  if(!feed) return;
+  const labels = {study:'📖 Study Techniques', focus:'🎯 Focus & Discipline', exam:'📝 Exam Strategy', mindset:'💪 Motivation & Mindset'};
+  const list = currentDropFilter==='all' ? DROPS : DROPS.filter(d=>d.cat===currentDropFilter);
+  feed.innerHTML = list.map((d,i) => `<div class="drop-card ${d.cat}" style="animation-delay:${i*.02}s">
+    <div class="drop-num">#${i+1}</div>
+    <div class="drop-cat-badge">${labels[d.cat]}</div>
+    <div class="drop-text">${d.text}</div>
+  </div>`).join('');
+}
+
+function renderQOTD() {
+  const wrap = document.getElementById('qotd-wrap');
+  if(!wrap) return;
+  const cls = {Mathematics:'subj-math', English:'subj-eng', Chemistry:'subj-chem', Physics:'subj-phys', Biology:'subj-bio'};
+  const today = ((new Date().getDate()-1) % 50);
+  wrap.innerHTML = QOTD.map((q,i) => `<div class="qotd-day-card${i===today?' open':''}">
+    <div class="qotd-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="qotd-day-badge ${cls[q.subj]||''}">Day ${q.day} · ${q.subj}</span>
+      <span class="qotd-q-preview">${q.q}</span>
+      <span class="qotd-toggle">⌄</span>
+    </div>
+    <div class="qotd-body">
+      <div class="qotd-question">❓ ${q.q}</div>
+      <div class="qotd-answer">✅ ${q.a}</div>
+    </div>
+  </div>`).join('');
+}
+
+function renderReality() {
+  const wrap = document.getElementById('reality-wrap');
+  if(!wrap) return;
+  wrap.innerHTML = REALITY_CHECKS.map((msg,i) => `<div class="reality-card" style="animation-delay:${i*.03}s">
+    <div class="reality-num">Reality Check #${i+1}</div>
+    <div class="reality-text">"${msg}"</div>
+    <div class="reality-fire">🔥</div>
+  </div>`).join('');
+}
+
+/* ════════════════════════════════════════════════
+   AUDIO STUDY MODE
+════════════════════════════════════════════════ */
+const TRACKS = [
+  {n:1,  f:"1.mp3",  t:"Study Session 1",  d:"Focus & Concentration"},
+  {n:2,  f:"2.mp3",  t:"Study Session 2",  d:"Deep Learning Mode"},
+  {n:3,  f:"3.mp3",  t:"Study Session 3",  d:"Memory & Retention"},
+  {n:4,  f:"4.mp3",  t:"Study Session 4",  d:"Mathematics Focus"},
+  {n:5,  f:"5.mp3",  t:"Study Session 5",  d:"English & Comprehension"},
+  {n:6,  f:"6.mp3",  t:"Study Session 6",  d:"Science & Biology"},
+  {n:7,  f:"7.mp3",  t:"Study Session 7",  d:"Chemistry Revision"},
+  {n:8,  f:"8.mp3",  t:"Study Session 8",  d:"Physics Concepts"},
+  {n:9,  f:"9.mp3",  t:"Study Session 9",  d:"JAMB Exam Prep"},
+  {n:10, f:"10.mp3", t:"Study Session 10", d:"Morning Study Boost"},
+  {n:11, f:"11.mp3", t:"Study Session 11", d:"Afternoon Focus Flow"},
+  {n:12, f:"12.mp3", t:"Study Session 12", d:"Evening Wind Down"},
+  {n:13, f:"13.mp3", t:"Study Session 13", d:"Active Recall Practice"},
+  {n:14, f:"14.mp3", t:"Study Session 14", d:"Speed Reading Mode"},
+  {n:15, f:"15.mp3", t:"Study Session 15", d:"Motivation & Mindset"},
+  {n:16, f:"16.mp3", t:"Study Session 16", d:"Exam Strategy"},
+  {n:17, f:"17.mp3", t:"Study Session 17", d:"Night Study Session"},
+  {n:18, f:"18.mp3", t:"Study Session 18", d:"Last-Minute Revision"},
+  {n:19, f:"19.mp3", t:"Study Session 19", d:"Final Push Mode"},
+  {n:20, f:"20.mp3", t:"Study Session 20", d:"Victory Lap — You Got This!"},
+];
+
+let curTrack = 0;
+let audioReady = false;
+
+function getAudio() { return document.getElementById('za'); }
+
+function initAudioPage() {
+  if(audioReady) return;
+  audioReady = true;
+  buildTrackList();
+  const a = getAudio();
+  a.addEventListener('timeupdate', onTimeUpdate);
+  a.addEventListener('loadedmetadata', onMetaLoaded);
+  a.addEventListener('ended', audioNext);
+}
+
+function buildTrackList() {
+  const list = document.getElementById('audio-tracklist');
+  if(!list) return;
+  list.innerHTML = TRACKS.map((t,i) => `
+    <div class="at-item${i===curTrack?' at-active':''}" id="at-${i}" onclick="selectTrack(${i})">
+      <div class="at-num" id="at-num-${i}">${t.n}</div>
+      <div class="at-info">
+        <div class="at-title">${t.t}</div>
+        <div class="at-sub">${t.d}</div>
+      </div>
+      <span class="at-ico" id="at-ico-${i}">▶</span>
+    </div>`).join('');
+}
+
+function selectTrack(idx) {
+  curTrack = idx;
+  const t = TRACKS[idx];
+  const a = getAudio();
+  a.src = t.f;
+  a.load();
+  // Update player header
+  document.getElementById('asp-num').textContent = 'Track ' + t.n + ' of ' + TRACKS.length;
+  document.getElementById('asp-title').textContent = t.t;
+  document.getElementById('asp-desc').textContent = t.d;
+  document.getElementById('asp-fill').style.width = '0%';
+  document.getElementById('asp-cur').textContent = '0:00';
+  document.getElementById('asp-total').textContent = '0:00';
+  // Update track list UI
+  document.querySelectorAll('.at-item').forEach((el,i) => {
+    el.classList.toggle('at-active', i===idx);
+  });
+  document.querySelectorAll('[id^="at-ico-"]').forEach((el,i) => {
+    el.innerHTML = i===idx
+      ? '<div class="eq-anim"><span></span><span></span><span></span></div>'
+      : '▶';
+  });
+  document.querySelectorAll('[id^="at-num-"]').forEach((el,i) => {
+    el.textContent = TRACKS[i].n;
+  });
+  // Play it
+  a.play().then(() => {
+    document.getElementById('asp-play').textContent = '⏸';
+  }).catch(() => {
+    toast('Audio file not found. Place ' + t.f + ' in the same folder as index.html.', 'error');
+    document.getElementById('asp-play').textContent = '▶';
+  });
+}
+
+function audioToggle() {
+  const a = getAudio();
+  if(!a.src || a.src === window.location.href) {
+    selectTrack(curTrack);
+    return;
+  }
+  if(a.paused) {
+    a.play().then(() => { document.getElementById('asp-play').textContent = '⏸'; });
+  } else {
+    a.pause();
+    document.getElementById('asp-play').textContent = '▶';
+  }
+}
+
+function audioNext() {
+  selectTrack((curTrack + 1) % TRACKS.length);
+}
+
+function audioPrev() {
+  const a = getAudio();
+  if(a.currentTime > 3) { a.currentTime = 0; return; }
+  selectTrack((curTrack - 1 + TRACKS.length) % TRACKS.length);
+}
+
+function audioSkipFwd()  { const a = getAudio(); a.currentTime = Math.min(a.currentTime+10, a.duration||0); }
+function audioSkipBack() { const a = getAudio(); a.currentTime = Math.max(a.currentTime-10, 0); }
+function audioVol(v)     { getAudio().volume = v; }
+
+function audioSeek(e) {
+  const a = getAudio();
+  const bar = document.getElementById('asp-bar');
+  if(!a.duration || !bar) return;
+  const r = bar.getBoundingClientRect();
+  a.currentTime = ((e.clientX - r.left) / r.width) * a.duration;
+}
+
+function onTimeUpdate() {
+  const a = getAudio();
+  if(!a.duration) return;
+  const pct = (a.currentTime / a.duration) * 100;
+  document.getElementById('asp-fill').style.width = pct + '%';
+  document.getElementById('asp-cur').textContent = fmtTime(a.currentTime);
+}
+
+function onMetaLoaded() {
+  document.getElementById('asp-total').textContent = fmtTime(getAudio().duration);
+}
+
+function fmtTime(s) {
+  if(!s || isNaN(s)) return '0:00';
+  const m = Math.floor(s/60), sec = Math.floor(s%60);
+  return m + ':' + (sec<10?'0':'') + sec;
+}
+
 </script>
 </body>
 </html>
