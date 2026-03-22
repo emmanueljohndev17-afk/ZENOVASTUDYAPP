@@ -10,6 +10,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
   <script src="https://js.puter.com/v2/"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <style>
 /* ═══════════════════════════════════════════
    DESIGN TOKENS
@@ -1139,6 +1140,236 @@ select.form-input { appearance: none; cursor: pointer; }
 .eq-anim span:nth-child(3){height:9px;animation-delay:.3s}
 @keyframes eq{from{transform:scaleY(.3)}to{transform:scaleY(1)}}
 
+
+/* ═══════════════════════════════════════════
+   CHALLENGES PAGE
+═══════════════════════════════════════════ */
+.ch-hero {
+  background: linear-gradient(145deg, #060f28 0%, #0b1f4a 40%, #7c3aed 100%);
+  border-radius: var(--r-xl); padding: 28px 22px 24px;
+  color: white; text-align: center; position: relative; overflow: hidden;
+  box-shadow: var(--shadow-xl);
+}
+.ch-hero::before { content:''; position:absolute; width:240px; height:240px; border-radius:50%; background:rgba(124,58,237,.2); top:-80px; right:-60px; pointer-events:none; }
+.ch-hero-icon { font-size: 44px; margin-bottom: 10px; }
+.ch-hero-title { font-family: var(--font-display); font-size: 26px; font-weight: 800; margin-bottom: 6px; letter-spacing: -.5px; }
+.ch-hero-sub { font-size: 13px; opacity: .65; font-weight: 500; margin-bottom: 20px; }
+.ch-hero-stats { display: flex; gap: 0; background: rgba(255,255,255,.1); border-radius: var(--r-md); overflow: hidden; border: 1px solid rgba(255,255,255,.15); }
+.ch-hero-stat { flex: 1; padding: 12px 8px; text-align: center; border-right: 1px solid rgba(255,255,255,.1); }
+.ch-hero-stat:last-child { border-right: none; }
+.ch-hs-val { font-family: var(--font-display); font-size: 22px; font-weight: 800; color: white; }
+.ch-hs-lbl { font-size: 10px; font-weight: 700; color: rgba(255,255,255,.55); text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
+
+.ch-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+.ch-tabs::-webkit-scrollbar { display: none; }
+.ch-tab { padding: 8px 16px; border-radius: 30px; font-size: 12px; font-weight: 700; white-space: nowrap; border: 1.5px solid var(--border); color: var(--text3); background: white; transition: all .2s; cursor: pointer; flex-shrink: 0; }
+.ch-tab.active { background: var(--navy); border-color: var(--navy); color: white; }
+
+/* Challenge Card */
+.ch-card {
+  background: white; border-radius: var(--r-lg);
+  border: 1.5px solid var(--border); box-shadow: var(--shadow-sm);
+  overflow: hidden; transition: all .2s;
+}
+.ch-card:hover { box-shadow: var(--shadow-md); }
+.ch-card-top {
+  padding: 18px 18px 14px;
+  display: flex; align-items: flex-start; gap: 14px;
+}
+.ch-badge {
+  width: 52px; height: 52px; border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; flex-shrink: 0;
+}
+.ch-badge.purple { background: #ede9fe; }
+.ch-badge.orange { background: #fff7ed; }
+.ch-badge.blue   { background: var(--blue-pale); }
+.ch-badge.green  { background: #dcfce7; }
+.ch-badge.red    { background: #fee2e2; }
+.ch-badge.gold   { background: #fefce8; }
+.ch-info { flex: 1; min-width: 0; }
+.ch-duration-tag {
+  display: inline-block; padding: 3px 10px; border-radius: 20px;
+  font-size: 10px; font-weight: 800; letter-spacing: .5px;
+  text-transform: uppercase; margin-bottom: 6px;
+}
+.tag-purple { background: #ede9fe; color: #7c3aed; }
+.tag-orange { background: #fff7ed; color: #ea580c; }
+.tag-blue   { background: var(--blue-pale); color: var(--blue); }
+.tag-green  { background: #dcfce7; color: #16a34a; }
+.tag-red    { background: #fee2e2; color: #dc2626; }
+.tag-gold   { background: #fefce8; color: #ca8a04; }
+.ch-name { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.ch-desc { font-size: 13px; color: var(--text2); font-weight: 500; line-height: 1.5; }
+
+/* Progress bar */
+.ch-progress-wrap { padding: 0 18px 14px; }
+.ch-progress-label { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--text3); margin-bottom: 6px; }
+.ch-progress-bar { height: 7px; background: var(--bg2); border-radius: 10px; overflow: hidden; }
+.ch-progress-fill { height: 100%; border-radius: 10px; transition: width .5s cubic-bezier(.4,0,.2,1); }
+
+/* Tasks list */
+.ch-tasks { padding: 0 18px 14px; display: flex; flex-direction: column; gap: 7px; }
+.ch-task {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: var(--r-sm);
+  background: var(--bg); border: 1.5px solid var(--border);
+  cursor: pointer; transition: all .2s;
+}
+.ch-task.done { background: #f0fdf4; border-color: #86efac; }
+.ch-task-check {
+  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid var(--border); display: flex; align-items: center; justify-content: center;
+  font-size: 12px; transition: all .2s; color: transparent;
+}
+.ch-task.done .ch-task-check { background: var(--green); border-color: var(--green); color: white; }
+.ch-task-text { flex: 1; font-size: 13px; font-weight: 600; color: var(--navy); line-height: 1.4; }
+.ch-task.done .ch-task-text { color: var(--text3); text-decoration: line-through; }
+.ch-task-day { font-size: 10px; font-weight: 800; color: var(--text3); flex-shrink: 0; }
+
+/* Footer actions */
+.ch-actions { padding: 0 18px 18px; display: flex; gap: 8px; }
+.ch-btn-start {
+  flex: 1; padding: 12px; border-radius: var(--r-sm); font-weight: 700; font-size: 14px;
+  background: linear-gradient(135deg, var(--purple), #a855f7);
+  color: white; border: none; cursor: pointer; transition: all .2s;
+  box-shadow: 0 4px 14px rgba(124,58,237,.3);
+}
+.ch-btn-start:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,58,237,.4); }
+.ch-btn-start.started { background: linear-gradient(135deg, var(--green), #16a34a); box-shadow: 0 4px 14px rgba(16,185,129,.3); }
+.ch-btn-start.completed { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 14px rgba(245,158,11,.3); cursor: default; }
+.ch-btn-expand { padding: 12px 16px; border-radius: var(--r-sm); font-weight: 700; font-size: 13px; background: var(--bg); border: 1.5px solid var(--border); color: var(--text2); cursor: pointer; transition: all .2s; }
+.ch-btn-expand:hover { border-color: var(--navy); color: var(--navy); }
+
+/* Completed badge overlay */
+.ch-card.ch-completed { border-color: #fbbf24; }
+.ch-completed-banner { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; text-align: center; padding: 8px; font-size: 12px; font-weight: 800; letter-spacing: .5px; }
+
+/* Expanded achievements */
+.ach-section-label { font-size: 11px; font-weight: 800; color: var(--text3); letter-spacing: .8px; text-transform: uppercase; margin: 14px 0 8px; }
+.achievement-card {
+  background: var(--bg2); border-radius: var(--r-md);
+  border: 1.5px solid var(--border);
+  padding: 14px 12px; text-align: center;
+  transition: all .2s; position: relative; overflow: hidden;
+}
+.achievement-card.unlocked {
+  border-color: var(--accent); background: linear-gradient(135deg,#fffbf0,#fff8e1);
+  box-shadow: var(--shadow-sm);
+}
+.achievement-card.unlocked:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.ach-icon { font-size: 28px; margin-bottom: 6px; filter: grayscale(1) opacity(.4); }
+.achievement-card.unlocked .ach-icon { filter: none; }
+.ach-name { font-weight: 700; font-size: 12px; color: var(--text3); margin-bottom: 2px; }
+.achievement-card.unlocked .ach-name { color: #92400e; }
+.ach-desc { font-size: 10.5px; color: var(--text3); font-weight: 500; line-height: 1.4; }
+.ach-unlocked-star { position: absolute; top: 6px; right: 8px; font-size: 12px; }
+
+
+
+/* ═══════════════════════════════════════════
+   WEEKLY REPORT CARD
+═══════════════════════════════════════════ */
+.report-hero {
+  background:linear-gradient(145deg,#060f28,#0b1f4a 50%,#162c62);
+  border-radius:var(--r-xl); padding:24px 20px;
+  color:white; display:flex; align-items:center; justify-content:space-between;
+  box-shadow:var(--shadow-xl); position:relative; overflow:hidden;
+}
+.report-hero::before { content:''; position:absolute; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,.04); top:-60px; right:-40px; pointer-events:none; }
+.report-hero-top { display:flex; align-items:center; gap:14px; }
+.report-hero-title { font-family:var(--font-display); font-size:22px; font-weight:800; }
+.report-hero-sub { font-size:12px; opacity:.6; font-weight:500; margin-top:3px; }
+.report-grade-wrap { text-align:center; flex-shrink:0; }
+.report-grade { font-family:var(--font-display); font-size:52px; font-weight:900; color:white; line-height:1; }
+.report-grade-label { font-size:10px; font-weight:800; color:rgba(255,255,255,.5); text-transform:uppercase; letter-spacing:.8px; margin-top:2px; }
+.report-stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.report-stat-card {
+  background:white; border-radius:var(--r-md); border:1px solid var(--border);
+  padding:16px 14px; box-shadow:var(--shadow-sm); position:relative; overflow:hidden;
+}
+.report-stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+.report-stat-card.c1::before { background:linear-gradient(90deg,var(--blue),var(--blue-soft)); }
+.report-stat-card.c2::before { background:linear-gradient(90deg,var(--purple),#a855f7); }
+.report-stat-card.c3::before { background:linear-gradient(90deg,var(--green),#34d399); }
+.report-stat-card.c4::before { background:linear-gradient(90deg,var(--accent),#fb923c); }
+.report-stat-icon { font-size:20px; margin-bottom:4px; }
+.report-stat-val { font-family:var(--font-display); font-size:26px; font-weight:800; color:var(--navy); }
+.report-stat-lbl { font-size:10.5px; color:var(--text3); font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
+.report-message-card {
+  background:linear-gradient(135deg,#f59e0b,#d97706);
+  border-radius:var(--r-md); padding:18px 20px;
+  display:flex; align-items:center; gap:14px; color:white;
+  box-shadow:var(--shadow-md);
+}
+.report-msg-icon { font-size:32px; flex-shrink:0; }
+.report-msg-text { font-family:var(--font-display); font-size:15px; font-weight:700; line-height:1.5; }
+
+/* ═══════════════════════════════════════════
+   SPIN THE WHEEL
+═══════════════════════════════════════════ */
+.spin-hero {
+  background:linear-gradient(145deg,#4c1d95,#7c3aed,#a855f7);
+  border-radius:var(--r-xl); padding:24px 22px 20px;
+  color:white; text-align:center; box-shadow:var(--shadow-xl);
+}
+.spin-hero-title { font-family:var(--font-display); font-size:26px; font-weight:800; margin-bottom:6px; }
+.spin-hero-sub { font-size:13px; opacity:.7; font-weight:500; }
+.spin-cooldown-tag { display:inline-block; margin-top:12px; padding:6px 16px; border-radius:30px; background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.25); font-size:12px; font-weight:700; }
+.spin-wheel-wrap { display:flex; flex-direction:column; align-items:center; gap:6px; }
+.spin-pointer { font-size:28px; color:var(--purple); line-height:1; }
+#spin-canvas { border-radius:50%; box-shadow:0 8px 32px rgba(124,58,237,.3); display:block; }
+.spin-btn {
+  width:100%; padding:18px; border-radius:var(--r-lg);
+  background:linear-gradient(135deg,#7c3aed,#a855f7);
+  color:white; font-size:18px; font-weight:800; border:none; cursor:pointer;
+  box-shadow:0 6px 24px rgba(124,58,237,.4); transition:all .2s;
+  letter-spacing:.5px;
+}
+.spin-btn:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(124,58,237,.5); }
+.spin-btn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+.spin-result-card {
+  background:white; border-radius:var(--r-lg); border:2px solid var(--purple);
+  padding:24px 20px; text-align:center; box-shadow:var(--shadow-lg);
+  animation:slideUp .4s cubic-bezier(.22,1,.36,1);
+}
+.spin-result-icon { font-size:52px; margin-bottom:12px; }
+.spin-result-title { font-family:var(--font-display); font-size:22px; font-weight:800; color:var(--navy); margin-bottom:8px; }
+.spin-result-desc { font-size:14px; color:var(--text2); font-weight:500; line-height:1.6; }
+.spin-history-item {
+  display:flex; align-items:center; gap:12px; padding:10px 14px;
+  background:var(--bg); border-radius:var(--r-sm); border:1px solid var(--border);
+}
+.spin-history-icon { font-size:22px; flex-shrink:0; }
+.spin-history-info { flex:1; }
+.spin-history-title { font-size:13px; font-weight:700; color:var(--navy); }
+.spin-history-time { font-size:11px; color:var(--text3); font-weight:500; margin-top:1px; }
+
+
+/* ═══════════════════════════════════════════
+   EXTRAS HUB
+═══════════════════════════════════════════ */
+.extras-tile {
+  background: white; border-radius: var(--r-lg);
+  border: 1.5px solid var(--border); box-shadow: var(--shadow-sm);
+  padding: 18px 16px; display: flex; align-items: center; gap: 16px;
+  cursor: pointer; transition: all .2s; text-align: left; width: 100%;
+}
+.extras-tile:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: var(--blue-tint); }
+.extras-tile:active { transform: scale(.98); }
+.extras-tile-icon {
+  width: 56px; height: 56px; border-radius: 16px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; box-shadow: var(--shadow-sm);
+}
+.extras-tile-info { flex: 1; min-width: 0; }
+.extras-tile-title { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+.extras-tile-desc { font-size: 13px; color: var(--text2); font-weight: 500; line-height: 1.5; }
+.extras-tile-arrow { font-size: 24px; color: var(--border2); flex-shrink: 0; transition: transform .2s, color .2s; }
+.extras-tile:hover .extras-tile-arrow { color: var(--blue); transform: translateX(3px); }
+
+
+
 </style>
 </head>
 <body>
@@ -1415,6 +1646,8 @@ select.form-input { appearance: none; cursor: pointer; }
     </div>
   </div>
 
+  <!-- ══ CHALLENGES ══ -->
+
   <!-- ══ PROFILE ══ -->
   <div id="page-profile" class="page">
     <div class="card profile-hero">
@@ -1517,9 +1750,10 @@ select.form-input { appearance: none; cursor: pointer; }
   <div id="page-library" class="page" style="padding:0;gap:0;">
     <div class="learn-header">
       <div class="learn-tabs">
-        <button class="learn-tab active" onclick="switchLearnTab('drops',this)"><span>⚡</span> Zenova Drops</button>
+        <button class="learn-tab active" onclick="switchLearnTab('drops',this)"><span>⚡</span> Drops</button>
         <button class="learn-tab" onclick="switchLearnTab('qotd',this)"><span>🎯</span> JAMB Q</button>
         <button class="learn-tab" onclick="switchLearnTab('reality',this)"><span>🔥</span> Reality</button>
+        <button class="learn-tab" onclick="switchLearnTab('challenges',this)"><span>🏆</span> Challenges</button>
       </div>
     </div>
     <div id="learn-drops" class="learn-panel active">
@@ -1539,6 +1773,25 @@ select.form-input { appearance: none; cursor: pointer; }
     </div>
     <div id="learn-reality" class="learn-panel">
       <div class="reality-wrap" id="reality-wrap"></div>
+    </div>
+    <div id="learn-challenges" class="learn-panel">
+      <div class="ch-hero">
+        <div class="ch-hero-icon">🏆</div>
+        <div class="ch-hero-title">Zenova Challenges</div>
+        <div class="ch-hero-sub">Start a challenge. Track your progress. Prove yourself.</div>
+        <div class="ch-hero-stats">
+          <div class="ch-hero-stat"><div class="ch-hs-val" id="ch-active-count">0</div><div class="ch-hs-lbl">Active</div></div>
+          <div class="ch-hero-stat"><div class="ch-hs-val" id="ch-done-count">0</div><div class="ch-hs-lbl">Completed</div></div>
+          <div class="ch-hero-stat"><div class="ch-hs-val" id="ch-xp-count">0</div><div class="ch-hs-lbl">XP Earned</div></div>
+        </div>
+      </div>
+      <div class="ch-tabs">
+        <button class="ch-tab active" onclick="filterChallenges('all',this)">All</button>
+        <button class="ch-tab" onclick="filterChallenges('active',this)">🔥 Active</button>
+        <button class="ch-tab" onclick="filterChallenges('available',this)">✨ Available</button>
+        <button class="ch-tab" onclick="filterChallenges('completed',this)">✅ Done</button>
+      </div>
+      <div id="challenges-list" style="display:flex;flex-direction:column;gap:12px;"></div>
     </div>
   </div>
 
@@ -1602,7 +1855,110 @@ select.form-input { appearance: none; cursor: pointer; }
       Progress
       <div class="nav-active-pill"></div>
     </button>
+    <button class="nav-item" onclick="showPage('extras')" id="nav-extras">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+      More
+      <div class="nav-active-pill"></div>
+    </button>
   </nav>
+
+
+  <!-- ══ EXTRAS HUB ══ -->
+  <div id="page-extras" class="page" style="padding:16px;gap:16px;">
+    <div class="card hero-banner" style="margin-bottom:0">
+      <div class="hero-greeting" style="font-size:22px;">✨ More Features</div>
+      <div class="hero-sub">Ask questions, view your report & spin the wheel</div>
+    </div>
+    <!-- 3 big feature tiles -->
+    <div style="display:flex;flex-direction:column;gap:12px;">
+
+
+
+      <button class="extras-tile" onclick="showPage('report')">
+        <div class="extras-tile-icon" style="background:linear-gradient(135deg,#10b981,#059669)">📊</div>
+        <div class="extras-tile-info">
+          <div class="extras-tile-title">Weekly Report Card</div>
+          <div class="extras-tile-desc">See your study stats, streak, XP and letter grade for the week.</div>
+        </div>
+        <div class="extras-tile-arrow">›</div>
+      </button>
+
+      <button class="extras-tile" onclick="showPage('spin')">
+        <div class="extras-tile-icon" style="background:linear-gradient(135deg,#7c3aed,#a855f7)">🎡</div>
+        <div class="extras-tile-info">
+          <div class="extras-tile-title">Spin the Wheel</div>
+          <div class="extras-tile-desc">Spin once a day to win bonus XP, study tips or a challenge task!</div>
+        </div>
+        <div class="extras-tile-arrow">›</div>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ══ WEEKLY REPORT CARD ══ -->
+  <div id="page-report" class="page" style="padding:16px;gap:14px;">
+    <div class="report-hero">
+      <div class="report-hero-top">
+        <div style="font-size:36px">📊</div>
+        <div>
+          <div class="report-hero-title">Weekly Report</div>
+          <div class="report-hero-sub" id="report-week-label">Your study summary</div>
+        </div>
+      </div>
+      <div class="report-grade-wrap">
+        <div class="report-grade" id="report-grade">A</div>
+        <div class="report-grade-label">Your Grade</div>
+      </div>
+    </div>
+    <!-- Stats grid -->
+    <div class="report-stats-grid" id="report-stats-grid"></div>
+    <!-- Weekly chart -->
+    <div class="card">
+      <div class="section-title" style="margin-bottom:16px">📅 Daily Study This Week</div>
+      <div class="week-chart" id="report-week-chart" style="height:90px;"></div>
+    </div>
+    <!-- Achievements this week -->
+    <div class="card">
+      <div class="section-title" style="margin-bottom:14px">🏆 Achievements Unlocked</div>
+      <div id="report-achievements" style="display:flex;flex-direction:column;gap:8px;"></div>
+    </div>
+    <!-- Message -->
+    <div class="report-message-card" id="report-message-card">
+      <div class="report-msg-icon">💬</div>
+      <div class="report-msg-text" id="report-msg-text">Keep going!</div>
+    </div>
+    <button class="btn-primary" onclick="shareReport()">📤 Share My Report Card</button>
+  </div>
+
+  <!-- ══ SPIN THE WHEEL ══ -->
+  <div id="page-spin" class="page" style="padding:16px;gap:14px;">
+    <div class="spin-hero">
+      <div class="spin-hero-title">🎡 Spin the Wheel</div>
+      <div class="spin-hero-sub">Spin once a day — win XP, study tips or a challenge task!</div>
+      <div class="spin-cooldown-tag" id="spin-cooldown-tag" style="display:none;"></div>
+    </div>
+    <!-- Wheel -->
+    <div class="spin-wheel-wrap">
+      <div class="spin-pointer">▼</div>
+      <canvas id="spin-canvas" width="300" height="300"></canvas>
+    </div>
+    <button class="spin-btn" id="spin-btn" onclick="doSpin()">🎡 SPIN!</button>
+    <!-- Result -->
+    <div class="spin-result-card" id="spin-result" style="display:none;">
+      <div class="spin-result-icon" id="spin-result-icon">🎉</div>
+      <div class="spin-result-title" id="spin-result-title">You won!</div>
+      <div class="spin-result-desc" id="spin-result-desc"></div>
+    </div>
+    <!-- Spin history -->
+    <div class="card">
+      <div class="section-title" style="margin-bottom:12px">🎰 Recent Spins</div>
+      <div id="spin-history" style="display:flex;flex-direction:column;gap:8px;">
+        <div class="empty"><div class="empty-ico">🎡</div><div class="empty-ttl">No spins yet</div><div class="empty-sub">Spin the wheel to get started</div></div>
+      </div>
+    </div>
+  </div>
+
+
 
 </div><!-- /app-screen -->
 
@@ -1743,27 +2099,275 @@ function getLevelTitle(lvl) {
    ACHIEVEMENTS
 ════════════════════════════════════════════════ */
 const ACHIEVEMENTS = [
-  { id:'first_card', icon:'🃏', name:'First Card', desc:'Create your first flashcard', check: ()=>flashcards.length>=1 },
-  { id:'deck_10', icon:'📚', name:'Deck Builder', desc:'Create 10 flashcards', check: ()=>flashcards.length>=10 },
-  { id:'first_session', icon:'⏱️', name:'First Step', desc:'Complete your first session', check: ()=>sessions.length>=1 },
-  { id:'streak_3', icon:'🔥', name:'On Fire', desc:'3-day study streak', check: ()=>(userProfile.streak||0)>=3 },
-  { id:'streak_7', icon:'💥', name:'Week Warrior', desc:'7-day study streak', check: ()=>(userProfile.streak||0)>=7 },
-  { id:'hour_5', icon:'⭐', name:'Rising Star', desc:'Study 5 hours total', check: ()=>(userProfile.totalStudyMinutes||0)>=300 },
-  { id:'hour_20', icon:'🌟', name:'Dedicated', desc:'Study 20 hours total', check: ()=>(userProfile.totalStudyMinutes||0)>=1200 },
-  { id:'exam_1', icon:'📅', name:'Prepared', desc:'Add your first exam', check: ()=>exams.length>=1 },
+  // Study
+  { id:'first_card',   icon:'🃏', name:'First Card',      desc:'Create your first flashcard',       cat:'Study',    check:()=>flashcards.length>=1 },
+  { id:'deck_10',      icon:'📚', name:'Deck Builder',    desc:'Create 10 flashcards',               cat:'Study',    check:()=>flashcards.length>=10 },
+  { id:'deck_25',      icon:'📖', name:'Card Master',     desc:'Create 25 flashcards',               cat:'Study',    check:()=>flashcards.length>=25 },
+  { id:'deck_50',      icon:'🗂️', name:'Knowledge Bank',  desc:'Create 50 flashcards',               cat:'Study',    check:()=>flashcards.length>=50 },
+  // Sessions
+  { id:'first_session',icon:'⏱️', name:'First Step',      desc:'Complete your first study session',  cat:'Sessions', check:()=>sessions.length>=1 },
+  { id:'session_5',    icon:'💪', name:'Getting Serious', desc:'Complete 5 study sessions',          cat:'Sessions', check:()=>sessions.length>=5 },
+  { id:'session_10',   icon:'🔑', name:'Consistent',      desc:'Complete 10 study sessions',         cat:'Sessions', check:()=>sessions.length>=10 },
+  { id:'session_25',   icon:'🚀', name:'Unstoppable',     desc:'Complete 25 study sessions',         cat:'Sessions', check:()=>sessions.length>=25 },
+  // Hours
+  { id:'hour_1',       icon:'⭐', name:'Rising Star',     desc:'Study 1 hour total',                 cat:'Hours',    check:()=>(userProfile.totalStudyMinutes||0)>=60 },
+  { id:'hour_5',       icon:'🌟', name:'Dedicated',       desc:'Study 5 hours total',                cat:'Hours',    check:()=>(userProfile.totalStudyMinutes||0)>=300 },
+  { id:'hour_20',      icon:'💎', name:'Study Diamond',   desc:'Study 20 hours total',               cat:'Hours',    check:()=>(userProfile.totalStudyMinutes||0)>=1200 },
+  { id:'hour_50',      icon:'🏅', name:'Marathon Man',    desc:'Study 50 hours total',               cat:'Hours',    check:()=>(userProfile.totalStudyMinutes||0)>=3000 },
+  { id:'hour_100',     icon:'👑', name:'JAMB Legend',     desc:'Study 100 hours total',              cat:'Hours',    check:()=>(userProfile.totalStudyMinutes||0)>=6000 },
+  // Streaks
+  { id:'streak_3',     icon:'🔥', name:'On Fire',         desc:'3-day study streak',                 cat:'Streaks',  check:()=>(userProfile.streak||0)>=3 },
+  { id:'streak_7',     icon:'💥', name:'Week Warrior',    desc:'7-day study streak',                 cat:'Streaks',  check:()=>(userProfile.streak||0)>=7 },
+  { id:'streak_14',    icon:'⚡', name:'2-Week Beast',    desc:'14-day study streak',                cat:'Streaks',  check:()=>(userProfile.streak||0)>=14 },
+  { id:'streak_30',    icon:'🌊', name:'30-Day King',     desc:'30-day study streak',                cat:'Streaks',  check:()=>(userProfile.streak||0)>=30 },
+  // Exams & Planning
+  { id:'exam_1',       icon:'📅', name:'Prepared',        desc:'Add your first exam countdown',      cat:'Planning', check:()=>exams.length>=1 },
+  { id:'exam_3',       icon:'📋', name:'Planner Pro',     desc:'Add 3 exam countdowns',              cat:'Planning', check:()=>exams.length>=3 },
+  { id:'timetable_1',  icon:'🗓️', name:'Organised',       desc:'Add your first timetable slot',      cat:'Planning', check:()=>timetableSlots.length>=1 },
+  { id:'timetable_7',  icon:'📆', name:'Schedule King',   desc:'Add 7 timetable slots',              cat:'Planning', check:()=>timetableSlots.length>=7 },
+  // Challenges
+  { id:'ch_started',   icon:'🏁', name:'Challenge Accepted',desc:'Start your first challenge',       cat:'Challenges',check:()=>Object.values(userProfile.challenges||{}).some(c=>c.started) },
+  { id:'ch_done_1',    icon:'🥉', name:'Challenge Complete',desc:'Complete any challenge',            cat:'Challenges',check:()=>Object.values(userProfile.challenges||{}).some(c=>c.completed) },
+  { id:'ch_done_3',    icon:'🥈', name:'Challenge Veteran', desc:'Complete 3 challenges',            cat:'Challenges',check:()=>Object.values(userProfile.challenges||{}).filter(c=>c.completed).length>=3 },
+  { id:'ch_done_all',  icon:'🥇', name:'Challenge God',    desc:'Complete all challenges',           cat:'Challenges',check:()=>CHALLENGE_DEFS.every(c=>userProfile.challenges?.[c.id]?.completed) },
 ];
+
 function renderAchievements() {
   const grid = document.getElementById('achievements-grid');
   if (!grid) return;
-  grid.innerHTML = ACHIEVEMENTS.map(a => {
-    const unlocked = a.check();
-    return `<div class="achievement-card ${unlocked?'unlocked':''}">
-      <div class="ach-icon">${a.icon}</div>
-      <div class="ach-name">${a.name}</div>
-      <div class="ach-desc">${a.desc}</div>
+  const cats = [...new Set(ACHIEVEMENTS.map(a=>a.cat))];
+  grid.innerHTML = cats.map(cat => {
+    const items = ACHIEVEMENTS.filter(a=>a.cat===cat);
+    return `<div style="grid-column:1/-1"><div class="ach-section-label">${cat}</div></div>` +
+      items.map(a => {
+        const unlocked = a.check();
+        return `<div class="achievement-card ${unlocked?'unlocked':''}">
+          ${unlocked ? '<div class="ach-unlocked-star">⭐</div>' : ''}
+          <div class="ach-icon">${a.icon}</div>
+          <div class="ach-name">${a.name}</div>
+          <div class="ach-desc">${a.desc}</div>
+        </div>`;
+      }).join('');
+  }).join('');
+}
+
+/* ════════════════════════════════════════════════
+   CHALLENGES SYSTEM
+════════════════════════════════════════════════ */
+const CHALLENGE_DEFS = [
+  {
+    id: 'ch_30day', icon: '🔥', color: 'purple', tag: 'tag-purple',
+    name: '30-Day Study Challenge',
+    desc: 'Study every day for 30 days straight. Build the habit that changes your life.',
+    duration: '30 Days', xp: 500,
+    tasks: [
+      'Day 1-5: Study at least 30 mins daily — build the habit',
+      'Day 6-10: Add flashcards for your weakest subject',
+      'Day 11-15: Complete 5 JAMB past questions per day',
+      'Day 16-20: Create a full weekly timetable and follow it',
+      'Day 21-25: Review all flashcards and fix wrong answers',
+      'Day 26-29: Practice under timed exam conditions daily',
+      'Day 30: Full mock exam session — you earned this!'
+    ]
+  },
+  {
+    id: 'ch_7day', icon: '⚡', color: 'orange', tag: 'tag-orange',
+    name: '7-Day Focus Sprint',
+    desc: 'One week of pure discipline. No excuses, no distractions, no quitting.',
+    duration: '7 Days', xp: 150,
+    tasks: [
+      'Day 1: Set up your timetable and study for 1 hour',
+      'Day 2: Create 10 flashcards on your hardest topic',
+      'Day 3: Complete 20 past questions in one subject',
+      'Day 4: Study for 2 hours using the Pomodoro timer',
+      'Day 5: Teach a topic out loud like you are a teacher',
+      'Day 6: Review everything from Day 1-5',
+      'Day 7: Take a 30-question mock test and score yourself'
+    ]
+  },
+  {
+    id: 'ch_jamb100', icon: '🎯', color: 'blue', tag: 'tag-blue',
+    name: 'JAMB 250+ Mission',
+    desc: 'A structured 14-day challenge to aim for 250 and above in JAMB.',
+    duration: '14 Days', xp: 300,
+    tasks: [
+      'Day 1-2: Attempt 50 Maths past questions, review errors',
+      'Day 3-4: Attempt 50 English past questions, learn new words',
+      'Day 5-6: Attempt 50 Biology or Chemistry past questions',
+      'Day 7: Rest and review all your mistakes from Days 1-6',
+      'Day 8-9: Re-attempt weak areas from your first week',
+      'Day 10-11: Full subject mock — all 4 JAMB subjects',
+      'Day 12-13: Create flashcards for every topic you failed',
+      'Day 14: Full JAMB mock exam under strict timed conditions'
+    ]
+  },
+  {
+    id: 'ch_flashcard', icon: '🃏', color: 'green', tag: 'tag-green',
+    name: 'Flashcard Beast Challenge',
+    desc: 'Create 50 flashcards in 5 days. Master every definition and formula.',
+    duration: '5 Days', xp: 100,
+    tasks: [
+      'Day 1: Create 10 flashcards on Maths formulas',
+      'Day 2: Create 10 flashcards on English vocabulary',
+      'Day 3: Create 10 flashcards on Biology definitions',
+      'Day 4: Create 10 flashcards on Chemistry equations',
+      'Day 5: Create 10 flashcards on Physics laws and units'
+    ]
+  },
+  {
+    id: 'ch_earlybird', icon: '🌅', color: 'gold', tag: 'tag-gold',
+    name: 'Early Bird Challenge',
+    desc: 'Wake up and study before 7am for 10 days in a row.',
+    duration: '10 Days', xp: 200,
+    tasks: [
+      'Day 1-3: Wake up by 6:30am, study for 45 mins before school',
+      'Day 4-6: Morning review session — go through previous notes',
+      'Day 7-8: Complete JAMB past questions in the morning',
+      'Day 9: Create a morning study playlist and study to it',
+      'Day 10: Final morning — 1 hour full mock and review'
+    ]
+  },
+  {
+    id: 'ch_noexcuses', icon: '💪', color: 'red', tag: 'tag-red',
+    name: 'No Excuses Challenge',
+    desc: '21 days of consistent action. Even when tired. Even when busy.',
+    duration: '21 Days', xp: 350,
+    tasks: [
+      'Week 1: Study minimum 1 hour every single day — no off days',
+      'Week 1: Complete at least 1 Zenova Drop category per day',
+      'Week 2: Attempt 30 past questions daily across any subject',
+      'Week 2: Add at least 5 flashcards per day',
+      'Week 2: Log every study session in the Focus Timer',
+      'Week 3: Full revision of all flashcards created so far',
+      'Week 3: Final stretch — 2-hour study session daily'
+    ]
+  }
+];
+
+let challengeFilter = 'all';
+
+function initChallenges() {
+  if(!userProfile.challenges) userProfile.challenges = {};
+  renderChallenges();
+  updateChallengeHeroStats();
+}
+
+function filterChallenges(f, btn) {
+  challengeFilter = f;
+  document.querySelectorAll('.ch-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderChallenges();
+}
+
+function updateChallengeHeroStats() {
+  const chs = userProfile.challenges || {};
+  const active = CHALLENGE_DEFS.filter(c=>chs[c.id]?.started && !chs[c.id]?.completed).length;
+  const done   = CHALLENGE_DEFS.filter(c=>chs[c.id]?.completed).length;
+  const xp     = CHALLENGE_DEFS.filter(c=>chs[c.id]?.completed).reduce((s,c)=>s+c.xp,0);
+  const el = id => document.getElementById(id);
+  if(el('ch-active-count')) el('ch-active-count').textContent = active;
+  if(el('ch-done-count'))   el('ch-done-count').textContent   = done;
+  if(el('ch-xp-count'))     el('ch-xp-count').textContent     = xp;
+}
+
+function renderChallenges() {
+  const list = document.getElementById('challenges-list');
+  if(!list) return;
+  const chs = userProfile.challenges || {};
+  let defs = CHALLENGE_DEFS;
+  if(challengeFilter === 'active')    defs = defs.filter(c=>chs[c.id]?.started && !chs[c.id]?.completed);
+  if(challengeFilter === 'available') defs = defs.filter(c=>!chs[c.id]?.started);
+  if(challengeFilter === 'completed') defs = defs.filter(c=>chs[c.id]?.completed);
+
+  if(!defs.length) {
+    list.innerHTML = '<div class="empty"><div class="empty-ico">🔍</div><div class="empty-ttl">Nothing here yet</div><div class="empty-sub">Check another tab</div></div>';
+    return;
+  }
+
+  list.innerHTML = defs.map(ch => {
+    const state = chs[ch.id] || {};
+    const tasksDone = (state.tasks || []).filter(Boolean).length;
+    const total = ch.tasks.length;
+    const pct = Math.round((tasksDone/total)*100);
+    const fillColor = ch.color==='purple'?'#7c3aed':ch.color==='orange'?'#ea580c':ch.color==='blue'?'var(--blue)':ch.color==='green'?'#16a34a':ch.color==='red'?'#dc2626':'#ca8a04';
+
+    let btnLabel = '🚀 Start Challenge';
+    let btnClass = 'ch-btn-start';
+    if(state.completed) { btnLabel = '🏆 Completed!'; btnClass = 'ch-btn-start completed'; }
+    else if(state.started) { btnLabel = '✅ Mark Task Done'; btnClass = 'ch-btn-start started'; }
+
+    const taskHTML = state.started ? `
+      <div class="ch-tasks">
+        ${ch.tasks.map((t,i) => `
+          <div class="ch-task${(state.tasks||[])[i]?' done':''}" onclick="toggleChallengeTask('${ch.id}',${i})">
+            <div class="ch-task-check">${(state.tasks||[])[i]?'✓':''}</div>
+            <div class="ch-task-text">${t}</div>
+            <div class="ch-task-day">${(state.tasks||[])[i]?'Done':'Pending'}</div>
+          </div>`).join('')}
+      </div>` : '';
+
+    return `<div class="ch-card${state.completed?' ch-completed':''}">
+      ${state.completed ? '<div class="ch-completed-banner">🏆 CHALLENGE COMPLETED — Well done!</div>' : ''}
+      <div class="ch-card-top">
+        <div class="ch-badge ${ch.color}">${ch.icon}</div>
+        <div class="ch-info">
+          <span class="ch-duration-tag ${ch.tag}">${ch.duration} · ${ch.xp} XP</span>
+          <div class="ch-name">${ch.name}</div>
+          <div class="ch-desc">${ch.desc}</div>
+        </div>
+      </div>
+      ${state.started ? `
+      <div class="ch-progress-wrap">
+        <div class="ch-progress-label"><span>${tasksDone}/${total} tasks complete</span><span>${pct}%</span></div>
+        <div class="ch-progress-bar"><div class="ch-progress-fill" style="width:${pct}%;background:${fillColor}"></div></div>
+      </div>` : ''}
+      ${taskHTML}
+      <div class="ch-actions">
+        ${!state.completed ? `<button class="${btnClass}" onclick="handleChallengeAction('${ch.id}')">${btnLabel}</button>` : `<button class="${btnClass}" disabled>${btnLabel}</button>`}
+        ${state.started && !state.completed ? `<button class="ch-btn-expand" onclick="toast('All tasks shown above — tick them off as you go!','')">📋 Tasks</button>` : ''}
+      </div>
     </div>`;
   }).join('');
 }
+
+function handleChallengeAction(id) {
+  if(!userProfile.challenges) userProfile.challenges = {};
+  const state = userProfile.challenges[id] || {};
+  if(!state.started) {
+    userProfile.challenges[id] = { started: true, startedAt: new Date().toISOString(), tasks: [] };
+    toast('Challenge started! 🚀 Work through each task daily.', 'success');
+    renderAchievements();
+  }
+  saveProfile();
+  renderChallenges();
+  updateChallengeHeroStats();
+}
+
+function toggleChallengeTask(id, idx) {
+  if(!userProfile.challenges) userProfile.challenges = {};
+  const state = userProfile.challenges[id];
+  if(!state || !state.started) return;
+  if(!state.tasks) state.tasks = [];
+  state.tasks[idx] = !state.tasks[idx];
+
+  // Check if all done
+  const def = CHALLENGE_DEFS.find(c=>c.id===id);
+  if(def && state.tasks.filter(Boolean).length === def.tasks.length) {
+    state.completed = true;
+    state.completedAt = new Date().toISOString();
+    // Award XP
+    userProfile.totalStudyMinutes = (userProfile.totalStudyMinutes||0) + Math.round(def.xp/2);
+    toast('🏆 Challenge Completed! You earned ' + def.xp + ' XP!', 'success');
+    renderAchievements();
+  } else {
+    const done = state.tasks.filter(Boolean).length;
+    if(state.tasks[idx]) toast('Task completed! ' + done + '/' + def.tasks.length + ' done 💪', 'success');
+  }
+  saveProfile();
+  renderChallenges();
+  updateChallengeHeroStats();
+}
+
 
 /* ════════════════════════════════════════════════
    AUTH STATE
@@ -1911,7 +2515,7 @@ function enterApp() {
 function refreshAll() {
   updateGreeting(); renderDashboard(); renderFlashcards(); renderSessions();
   renderProfile(); renderProgress(); renderExams(); renderTimetable();
-  updateTopbarAvatar(); checkStreak(); renderAchievements();
+  updateTopbarAvatar(); checkStreak(); renderAchievements(); if(userProfile) initChallenges();
 }
 
 /* ════════════════════════════════════════════════
@@ -2510,22 +3114,26 @@ function esc(s){if(!s)return'';const d=document.createElement('div');d.textConte
 /* ════════════════════════════════════════════════
    NAVIGATION (updated)
 ════════════════════════════════════════════════ */
-const NAV_PAGES = ['dashboard','library','progress','audio'];
+const NAV_PAGES = ['dashboard','library','progress','audio','extras'];
 
 function showPage(page) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   const el = document.getElementById('page-'+page);
   if(el) el.classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  if(NAV_PAGES.includes(page)) document.getElementById('nav-'+page)?.classList.add('active');
+  const navPage = ['ask','report','spin'].includes(page) ? 'extras' : page;
+  if(NAV_PAGES.includes(navPage)) document.getElementById('nav-'+navPage)?.classList.add('active');
   if(page==='progress')   { renderProgress(); renderAchievements(); }
   if(page==='dashboard')  { renderDashboard(); }
   if(page==='flashcards') { renderFlashcards(); }
   if(page==='exams')      { renderExams(); }
   if(page==='timetable')  { renderTimetable(); }
   if(page==='profile')    { renderProfile(); }
-  if(page==='library')    { renderDrops(); }
+  if(page==='library')    { renderDrops(); initChallenges(); }
   if(page==='audio')      { initAudioPage(); }
+  if(page==='report')     { renderReport(); }
+  if(page==='spin')       { initSpin(); }
+  if(page==='extras')     {}
   window.scrollTo(0,0);
 }
 
@@ -2727,9 +3335,10 @@ function switchLearnTab(tab, btn) {
   btn.classList.add('active');
   document.querySelectorAll('.learn-panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('learn-'+tab).classList.add('active');
-  if(tab==='drops')   renderDrops();
-  if(tab==='qotd')    renderQOTD();
-  if(tab==='reality') renderReality();
+  if(tab==='drops')      renderDrops();
+  if(tab==='qotd')       renderQOTD();
+  if(tab==='reality')    renderReality();
+  if(tab==='challenges') initChallenges();
 }
 
 function filterDrops(cat, btn) {
@@ -2783,26 +3392,26 @@ function renderReality() {
    AUDIO STUDY MODE
 ════════════════════════════════════════════════ */
 const TRACKS = [
-  {n:1,  f:"1.mp3",  t:"Study Session 1",  d:"Focus & Concentration"},
-  {n:2,  f:"2.mp3",  t:"Study Session 2",  d:"Deep Learning Mode"},
-  {n:3,  f:"3.mp3",  t:"Study Session 3",  d:"Memory & Retention"},
-  {n:4,  f:"4.mp3",  t:"Study Session 4",  d:"Mathematics Focus"},
-  {n:5,  f:"5.mp3",  t:"Study Session 5",  d:"English & Comprehension"},
-  {n:6,  f:"6.mp3",  t:"Study Session 6",  d:"Science & Biology"},
-  {n:7,  f:"7.mp3",  t:"Study Session 7",  d:"Chemistry Revision"},
-  {n:8,  f:"8.mp3",  t:"Study Session 8",  d:"Physics Concepts"},
-  {n:9,  f:"9.mp3",  t:"Study Session 9",  d:"JAMB Exam Prep"},
-  {n:10, f:"10.mp3", t:"Study Session 10", d:"Morning Study Boost"},
-  {n:11, f:"11.mp3", t:"Study Session 11", d:"Afternoon Focus Flow"},
-  {n:12, f:"12.mp3", t:"Study Session 12", d:"Evening Wind Down"},
-  {n:13, f:"13.mp3", t:"Study Session 13", d:"Active Recall Practice"},
-  {n:14, f:"14.mp3", t:"Study Session 14", d:"Speed Reading Mode"},
-  {n:15, f:"15.mp3", t:"Study Session 15", d:"Motivation & Mindset"},
-  {n:16, f:"16.mp3", t:"Study Session 16", d:"Exam Strategy"},
-  {n:17, f:"17.mp3", t:"Study Session 17", d:"Night Study Session"},
-  {n:18, f:"18.mp3", t:"Study Session 18", d:"Last-Minute Revision"},
-  {n:19, f:"19.mp3", t:"Study Session 19", d:"Final Push Mode"},
-  {n:20, f:"20.mp3", t:"Study Session 20", d:"Victory Lap — You Got This!"},
+  {n:1,  f:"1.mp4",  t:"Study Session 1",  d:"Focus & Concentration"},
+  {n:2,  f:"2.mp4",  t:"Study Session 2",  d:"Deep Learning Mode"},
+  {n:3,  f:"3.mp4",  t:"Study Session 3",  d:"Memory & Retention"},
+  {n:4,  f:"4.mp4",  t:"Study Session 4",  d:"Mathematics Focus"},
+  {n:5,  f:"5.mp4",  t:"Study Session 5",  d:"English & Comprehension"},
+  {n:6,  f:"6.mp4",  t:"Study Session 6",  d:"Science & Biology"},
+  {n:7,  f:"7.mp4",  t:"Study Session 7",  d:"Chemistry Revision"},
+  {n:8,  f:"8.mp4",  t:"Study Session 8",  d:"Physics Concepts"},
+  {n:9,  f:"9.mp4",  t:"Study Session 9",  d:"JAMB Exam Prep"},
+  {n:10, f:"10.mp4", t:"Study Session 10", d:"Morning Study Boost"},
+  {n:11, f:"11.mp4", t:"Study Session 11", d:"Afternoon Focus Flow"},
+  {n:12, f:"12.mp4", t:"Study Session 12", d:"Evening Wind Down"},
+  {n:13, f:"13.mp4", t:"Study Session 13", d:"Active Recall Practice"},
+  {n:14, f:"14.mp4", t:"Study Session 14", d:"Speed Reading Mode"},
+  {n:15, f:"15.mp4", t:"Study Session 15", d:"Motivation & Mindset"},
+  {n:16, f:"16.mp4", t:"Study Session 16", d:"Exam Strategy"},
+  {n:17, f:"17.mp4", t:"Study Session 17", d:"Night Study Session"},
+  {n:18, f:"18.mp4", t:"Study Session 18", d:"Last-Minute Revision"},
+  {n:19, f:"19.mp4", t:"Study Session 19", d:"Final Push Mode"},
+  {n:20, f:"20.mp4", t:"Study Session 20", d:"Victory Lap — You Got This!"},
 ];
 
 let curTrack = 0;
@@ -2922,6 +3531,294 @@ function fmtTime(s) {
   return m + ':' + (sec<10?'0':'') + sec;
 }
 
+
+
+
+/* ════════════════════════════════════════════════
+   WEEKLY REPORT CARD
+════════════════════════════════════════════════ */
+function renderReport() {
+  const now = new Date();
+  const dayOfWeek = now.getDay();
+  // Week label
+  const weekStart = new Date(now); weekStart.setDate(now.getDate() - dayOfWeek + 1);
+  const weekEnd   = new Date(now); weekEnd.setDate(now.getDate() - dayOfWeek + 7);
+  const fmt = d => d.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
+  const lbl = document.getElementById('report-week-label');
+  if(lbl) lbl.textContent = fmt(weekStart) + ' — ' + fmt(weekEnd);
+
+  // Stats
+  const weekData   = userProfile.weekData || [0,0,0,0,0,0,0];
+  const weekMins   = weekData.reduce((a,b)=>a+b,0);
+  const weekHours  = (weekMins/60).toFixed(1);
+  const sessions   = (userProfile.sessions||[]).filter(s => {
+    try { return new Date(s.date) >= weekStart; } catch(e){ return false; }
+  }).length;
+  const streak     = userProfile.streak || 0;
+  const xp         = getXP();
+  const cards      = (flashcards||[]).length;
+
+  // Grade
+  const score = Math.min(100, Math.round((weekMins/600)*40 + (streak/7)*30 + (sessions/7)*30));
+  const grade = score>=90?'A+':score>=80?'A':score>=70?'B+':score>=60?'B':score>=50?'C':score>=40?'D':'F';
+  const gradeEl = document.getElementById('report-grade');
+  if(gradeEl) {
+    gradeEl.textContent = grade;
+    gradeEl.style.color = score>=70?'#34d399':score>=50?'#fbbf24':'#f87171';
+  }
+
+  // Stats cards
+  const statsGrid = document.getElementById('report-stats-grid');
+  if(statsGrid) statsGrid.innerHTML = [
+    {icon:'⏱',val:weekHours+'h',lbl:'Study Time',cls:'c1'},
+    {icon:'🔥',val:streak,lbl:'Day Streak',cls:'c2'},
+    {icon:'💾',val:sessions,lbl:'Sessions',cls:'c3'},
+    {icon:'⭐',val:xp,lbl:'Total XP',cls:'c4'},
+  ].map(s=>`<div class="report-stat-card ${s.cls}">
+    <div class="report-stat-icon">${s.icon}</div>
+    <div class="report-stat-val">${s.val}</div>
+    <div class="report-stat-lbl">${s.lbl}</div>
+  </div>`).join('');
+
+  // Week chart
+  const chart = document.getElementById('report-week-chart');
+  if(chart) {
+    const days=['M','T','W','T','F','S','S'];
+    const max = Math.max(...weekData,1);
+    const today = (now.getDay()+6)%7;
+    chart.innerHTML = weekData.map((v,i)=>{
+      const pct = Math.max(4,Math.round((v/max)*100));
+      return `<div class="wbar-wrap">
+        <div class="wbar${i===today?' today':''}" style="height:${pct}%"></div>
+        <div class="wbar-day">${days[i]}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Achievements
+  const achEl = document.getElementById('report-achievements');
+  if(achEl) {
+    const unlocked = ACHIEVEMENTS.filter(a=>a.check());
+    if(!unlocked.length) {
+      achEl.innerHTML = '<div style="font-size:13px;color:var(--text3);font-weight:500;text-align:center;padding:10px 0">No achievements unlocked yet — keep going! 💪</div>';
+    } else {
+      achEl.innerHTML = unlocked.slice(0,6).map(a=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+          <span style="font-size:20px">${a.icon}</span>
+          <div><div style="font-weight:700;font-size:13px;color:var(--navy)">${a.name}</div>
+          <div style="font-size:12px;color:var(--text3)">${a.desc}</div></div>
+        </div>`).join('');
+    }
+  }
+
+  // Motivational message
+  const msgs = [
+    {grade:'A+', icon:'🔥', msg:'You are an absolute legend. This week was elite. Keep this energy!'},
+    {grade:'A',  icon:'⭐', msg:'Excellent week! You are building the habits of a champion.'},
+    {grade:'B+', icon:'💪', msg:'Solid week. You are on the right track — push just a little harder!'},
+    {grade:'B',  icon:'📚', msg:'Good effort! Consistency is your superpower. Keep showing up.'},
+    {grade:'C',  icon:'⚡', msg:'Average week. You have more in you — next week, give more.'},
+    {grade:'D',  icon:'🎯', msg:'You can do better. Set a goal for next week and commit to it.'},
+    {grade:'F',  icon:'💬', msg:'This week was tough — but you are still here. Start fresh tomorrow.'},
+  ];
+  const m = msgs.find(m=>m.grade===grade) || msgs[msgs.length-1];
+  const msgCard = document.getElementById('report-message-card');
+  const msgText = document.getElementById('report-msg-text');
+  if(msgText) msgText.textContent = m.msg;
+  if(msgCard) document.getElementById('report-message-card').querySelector('.report-msg-icon').textContent = m.icon;
+}
+
+function shareReport() {
+  const grade   = document.getElementById('report-grade')?.textContent || '?';
+  const name    = userProfile.name || 'A Zenova Student';
+  const streak  = userProfile.streak || 0;
+  const xp      = getXP();
+  const text    = `📊 My Zenova Weekly Report\n\n👤 ${name}\n🏆 Grade: ${grade}\n🔥 Streak: ${streak} days\n⭐ XP: ${xp}\n\n📚 Study smarter with Zenova!\nhttps://emmanueljohndev17-afk.github.io/ZENOVAMAIN/`;
+  if(navigator.share) {
+    navigator.share({title:'My Zenova Report', text});
+  } else if(navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(()=>toast('Report copied! Share it on WhatsApp 📤','success'));
+  }
+}
+
+/* ════════════════════════════════════════════════
+   SPIN THE WHEEL
+════════════════════════════════════════════════ */
+const WHEEL_SEGMENTS = [
+  {label:'50 XP!',      icon:'⭐', color:'#2354e6', type:'xp',  value:50,  desc:'Amazing! You just earned 50 bonus XP. Keep spinning tomorrow!'},
+  {label:'Study Tip',   icon:'💡', color:'#7c3aed', type:'tip', value:0,   desc:''},
+  {label:'100 XP!',     icon:'🌟', color:'#10b981', type:'xp',  value:100, desc:'Incredible! 100 bonus XP added to your account!'},
+  {label:'Challenge!',  icon:'🏆', color:'#f59e0b', type:'task',value:0,   desc:''},
+  {label:'25 XP',       icon:'✨', color:'#3b6aff', type:'xp',  value:25,  desc:'Nice! 25 XP earned. You are on a roll!'},
+  {label:'Reality Check',icon:'🔥',color:'#ef4444', type:'reality',value:0,desc:''},
+  {label:'75 XP!',      icon:'💎', color:'#0b1f4a', type:'xp',  value:75,  desc:'Great spin! 75 XP earned. Come back tomorrow for more!'},
+  {label:'Study Tip',   icon:'📖', color:'#8b5cf6', type:'tip', value:0,   desc:''},
+];
+
+let spinCanvas, spinCtx, spinAngle = 0, spinSpinning = false, spinInited = false;
+
+function initSpin() {
+  if(spinInited) { drawWheel(spinAngle); renderSpinHistory(); checkSpinCooldown(); return; }
+  spinInited = true;
+  spinCanvas = document.getElementById('spin-canvas');
+  if(!spinCanvas) return;
+  spinCtx = spinCanvas.getContext('2d');
+  drawWheel(0);
+  renderSpinHistory();
+  checkSpinCooldown();
+}
+
+function drawWheel(angle) {
+  if(!spinCtx) return;
+  const cx = 150, cy = 150, r = 140;
+  const seg = (2*Math.PI)/WHEEL_SEGMENTS.length;
+  spinCtx.clearRect(0,0,300,300);
+  WHEEL_SEGMENTS.forEach((s,i) => {
+    const start = angle + i*seg - Math.PI/2;
+    const end   = start + seg;
+    spinCtx.beginPath();
+    spinCtx.moveTo(cx,cy);
+    spinCtx.arc(cx,cy,r,start,end);
+    spinCtx.closePath();
+    spinCtx.fillStyle = s.color;
+    spinCtx.fill();
+    spinCtx.strokeStyle = 'white';
+    spinCtx.lineWidth = 2;
+    spinCtx.stroke();
+    // Label
+    spinCtx.save();
+    spinCtx.translate(cx,cy);
+    spinCtx.rotate(start + seg/2);
+    spinCtx.textAlign = 'right';
+    spinCtx.fillStyle = 'white';
+    spinCtx.font = 'bold 13px Plus Jakarta Sans, sans-serif';
+    spinCtx.fillText(s.icon + ' ' + s.label, r-10, 5);
+    spinCtx.restore();
+  });
+  // Center circle
+  spinCtx.beginPath();
+  spinCtx.arc(cx,cy,22,0,2*Math.PI);
+  spinCtx.fillStyle = 'white';
+  spinCtx.fill();
+  spinCtx.strokeStyle = '#dde3f0';
+  spinCtx.lineWidth = 2;
+  spinCtx.stroke();
+  spinCtx.fillStyle = '#0b1f4a';
+  spinCtx.font = 'bold 18px Plus Jakarta Sans';
+  spinCtx.textAlign = 'center';
+  spinCtx.textBaseline = 'middle';
+  spinCtx.fillText('🎡', cx, cy);
+}
+
+function checkSpinCooldown() {
+  const last = userProfile.lastSpin;
+  const tag  = document.getElementById('spin-cooldown-tag');
+  const btn  = document.getElementById('spin-btn');
+  if(!last) { if(tag) tag.style.display='none'; if(btn) btn.disabled=false; return; }
+  const diff = Date.now() - new Date(last).getTime();
+  const hrs  = 24 - Math.floor(diff/3600000);
+  if(diff < 86400000) {
+    if(tag) { tag.style.display='inline-block'; tag.textContent = '⏰ Next spin in ' + hrs + 'h'; }
+    if(btn) { btn.disabled=true; btn.textContent='Come back in ' + hrs + 'h'; }
+  } else {
+    if(tag) tag.style.display='none';
+    if(btn) { btn.disabled=false; btn.textContent='🎡 SPIN!'; }
+  }
+}
+
+function doSpin() {
+  if(spinSpinning) return;
+  const last = userProfile.lastSpin;
+  if(last && Date.now()-new Date(last).getTime()<86400000) { toast('Come back tomorrow for your next spin!','error'); return; }
+
+  spinSpinning = true;
+  document.getElementById('spin-btn').disabled = true;
+  document.getElementById('spin-result').style.display = 'none';
+
+  // Pick winner
+  const winIdx   = Math.floor(Math.random()*WHEEL_SEGMENTS.length);
+  const seg      = (2*Math.PI)/WHEEL_SEGMENTS.length;
+  const targetAngle = (Math.PI*10) + (2*Math.PI - (winIdx*seg + seg/2));
+  const startAngle  = spinAngle;
+  const totalDelta  = targetAngle;
+  const duration    = 4000;
+  const startTime   = performance.now();
+
+  function animate(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed/duration, 1);
+    const eased    = 1 - Math.pow(1-progress, 4);
+    spinAngle      = startAngle + totalDelta*eased;
+    drawWheel(spinAngle);
+    if(progress < 1) { requestAnimationFrame(animate); }
+    else {
+      spinSpinning = false;
+      spinAngle = spinAngle % (2*Math.PI);
+      showSpinResult(winIdx);
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+function showSpinResult(idx) {
+  const seg = WHEEL_SEGMENTS[idx];
+  let title = '', desc = seg.desc, icon = seg.icon;
+
+  if(seg.type === 'xp') {
+    title = 'You won ' + seg.value + ' XP!';
+    userProfile.totalStudyMinutes = (userProfile.totalStudyMinutes||0) + Math.round(seg.value/2);
+    saveProfile();
+  } else if(seg.type === 'tip') {
+    const tip = DROPS[Math.floor(Math.random()*DROPS.length)];
+    title = 'Study Tip Unlocked!';
+    desc  = tip ? tip.text : 'Keep studying every day!';
+  } else if(seg.type === 'task') {
+    const ch = CHALLENGE_DEFS[Math.floor(Math.random()*CHALLENGE_DEFS.length)];
+    title = 'Challenge Task!';
+    desc  = ch ? 'Try this: ' + ch.tasks[0] : 'Study for 1 hour today!';
+  } else if(seg.type === 'reality') {
+    title = 'Reality Check!';
+    desc  = REALITY_CHECKS[Math.floor(Math.random()*REALITY_CHECKS.length)];
+  }
+
+  document.getElementById('spin-result-icon').textContent  = icon;
+  document.getElementById('spin-result-title').textContent = title;
+  document.getElementById('spin-result-desc').textContent  = desc;
+  document.getElementById('spin-result').style.display     = 'block';
+
+  // Save to history
+  userProfile.lastSpin = new Date().toISOString();
+  if(!userProfile.spinHistory) userProfile.spinHistory = [];
+  userProfile.spinHistory.unshift({ icon, title, desc, time: new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}), date: new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short'}) });
+  userProfile.spinHistory = userProfile.spinHistory.slice(0,10);
+  saveProfile();
+
+  checkSpinCooldown();
+  renderSpinHistory();
+  toast(title + ' ' + icon, 'success');
+}
+
+function renderSpinHistory() {
+  const wrap = document.getElementById('spin-history');
+  if(!wrap) return;
+  const hist = userProfile.spinHistory || [];
+  if(!hist.length) {
+    wrap.innerHTML = '<div class="empty"><div class="empty-ico">🎡</div><div class="empty-ttl">No spins yet</div><div class="empty-sub">Spin the wheel to get started</div></div>';
+    return;
+  }
+  wrap.innerHTML = hist.map(h=>`
+    <div class="spin-history-item">
+      <span class="spin-history-icon">${h.icon}</span>
+      <div class="spin-history-info">
+        <div class="spin-history-title">${esc(h.title)}</div>
+        <div class="spin-history-time">${h.date} at ${h.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+
+
 </script>
 </body>
 </html>
+
