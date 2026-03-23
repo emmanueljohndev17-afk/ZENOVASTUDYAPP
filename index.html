@@ -1619,7 +1619,7 @@ select.form-input { appearance: none; cursor: pointer; }
   <div id="page-progress" class="page">
     <div class="card" style="text-align:center">
       <div class="section-title" style="margin-bottom:4px">Weekly Goal</div>
-      <div class="section-sub" style="margin-bottom:20px">Target: 10 hours / week</div>
+      <div class="section-sub ring-sub" style="margin-bottom:20px">This week: 0h / 10h target — resets every Monday</div>
       <div class="progress-ring-wrap">
         <svg class="ring-svg" width="150" height="150" viewBox="0 0 150 150">
           <defs><linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:var(--blue)"/><stop offset="100%" style="stop-color:var(--blue-soft)"/></linearGradient></defs>
@@ -1634,10 +1634,10 @@ select.form-input { appearance: none; cursor: pointer; }
     </div>
     <div class="card">
       <div class="section-title" style="margin-bottom:16px">Goals Tracker</div>
-      <div class="goal-row"><div class="goal-icon">⏱</div><div class="goal-info"><div class="goal-name">Study Hours</div><div class="goal-prog"><span id="goal-hours-done">0</span> / 10 hrs</div><div class="goal-bar-bg"><div class="goal-bar-fill" id="goal-bar-hours" style="width:0%"></div></div></div><div class="goal-pct" id="goal-pct-hours">0%</div></div>
+      <div class="goal-row"><div class="goal-icon">⏱</div><div class="goal-info"><div class="goal-name">Study Hours <span style="font-size:10px;color:var(--blue);font-weight:800">THIS WEEK</span></div><div class="goal-prog"><span id="goal-hours-done">0</span> / 10 hrs</div><div class="goal-bar-bg"><div class="goal-bar-fill" id="goal-bar-hours" style="width:0%"></div></div></div><div class="goal-pct" id="goal-pct-hours">0%</div></div>
       <div class="goal-row"><div class="goal-icon">🃏</div><div class="goal-info"><div class="goal-name">Flashcards Created</div><div class="goal-prog"><span id="goal-cards-done">0</span> / 20 cards</div><div class="goal-bar-bg"><div class="goal-bar-fill" id="goal-bar-cards" style="width:0%"></div></div></div><div class="goal-pct" id="goal-pct-cards">0%</div></div>
       <div class="goal-row"><div class="goal-icon">🔥</div><div class="goal-info"><div class="goal-name">Study Streak</div><div class="goal-prog"><span id="goal-streak-done">0</span> / 7 days</div><div class="goal-bar-bg"><div class="goal-bar-fill" id="goal-bar-streak" style="width:0%"></div></div></div><div class="goal-pct" id="goal-pct-streak">0%</div></div>
-      <div class="goal-row"><div class="goal-icon">📅</div><div class="goal-info"><div class="goal-name">Sessions Completed</div><div class="goal-prog"><span id="goal-sess-done">0</span> / 14 sessions</div><div class="goal-bar-bg"><div class="goal-bar-fill" id="goal-bar-sess" style="width:0%"></div></div></div><div class="goal-pct" id="goal-pct-sess">0%</div></div>
+      <div class="goal-row"><div class="goal-icon">📅</div><div class="goal-info"><div class="goal-name">Sessions <span style="font-size:10px;color:var(--blue);font-weight:800">THIS WEEK</span></div><div class="goal-prog"><span id="goal-sess-done">0</span> / 14 sessions</div><div class="goal-bar-bg"><div class="goal-bar-fill" id="goal-bar-sess" style="width:0%"></div></div></div><div class="goal-pct" id="goal-pct-sess">0%</div></div>
     </div>
     <!-- Achievements -->
     <div class="card">
@@ -2510,6 +2510,7 @@ async function deleteSlotFromCloud(id){await db.collection('users').doc(currentU
 ════════════════════════════════════════════════ */
 function enterApp() {
   hideLoading(); showScreen('app-screen');
+  checkWeekReset();
   refreshAll(); startExamCountdownTickers();
 }
 function refreshAll() {
@@ -2545,19 +2546,64 @@ function updateGreeting() {
   const subs = ['Ready to crush today\'s goals?','Let\'s make today count!','Your future self will thank you.','One session at a time 💪','Consistency is your superpower.'];
   document.getElementById('hero-sub-text').textContent = subs[new Date().getDay() % subs.length];
 }
+function todayStr(){return new Date().toISOString().slice(0,10);}
+
+/* Returns the Monday date string of the current week (YYYY-MM-DD) */
+function thisWeekMonday() {
+  const d = new Date();
+  const day = d.getDay(); // 0=Sun,1=Mon...
+  const diff = (day === 0) ? -6 : 1 - day; // shift to Monday
+  d.setDate(d.getDate() + diff);
+  return d.toISOString().slice(0,10);
+}
+
+/* Check if weekData belongs to the current week — reset if not */
+function checkWeekReset() {
+  const monday = thisWeekMonday();
+  if(userProfile.currentWeekMonday !== monday) {
+    // Save last week data to history before resetting
+    if(userProfile.weekData && userProfile.weekData.some(v=>v>0)) {
+      if(!userProfile.weekHistory) userProfile.weekHistory = [];
+      userProfile.weekHistory.unshift({
+        week: userProfile.currentWeekMonday || monday,
+        data: [...(userProfile.weekData||[0,0,0,0,0,0,0])],
+        totalMins: (userProfile.weekData||[]).reduce((a,b)=>a+b,0),
+        sessions: (userProfile.weekSessions||0),
+      });
+      userProfile.weekHistory = userProfile.weekHistory.slice(0,12); // keep 12 weeks
+    }
+    // Reset weekly counters
+    userProfile.currentWeekMonday = monday;
+    userProfile.weekData     = [0,0,0,0,0,0,0];
+    userProfile.weekSessions = 0;
+    userProfile.weekMinutes  = 0;
+    saveProfile();
+  }
+}
+
 function checkStreak() {
   if(!userProfile.lastStudyDate) return;
   const diff=Math.floor((new Date(todayStr())-new Date(userProfile.lastStudyDate))/86400000);
   if(diff>1){userProfile.streak=0;saveProfile();updateGreeting();}
 }
-function todayStr(){return new Date().toISOString().slice(0,10);}
+
 function recordStudy(minutes) {
-  const today=todayStr();
-  userProfile.totalStudyMinutes=(userProfile.totalStudyMinutes||0)+minutes;
-  const diff=userProfile.lastStudyDate?Math.floor((new Date(today)-new Date(userProfile.lastStudyDate))/86400000):1;
-  if(userProfile.lastStudyDate!==today){userProfile.streak=diff===1?(userProfile.streak||0)+1:1;userProfile.lastStudyDate=today;}
-  if(!userProfile.weekData)userProfile.weekData=[0,0,0,0,0,0,0];
-  userProfile.weekData[(new Date().getDay()+6)%7]=(userProfile.weekData[(new Date().getDay()+6)%7]||0)+minutes;
+  const today = todayStr();
+  // All-time total (for achievements)
+  userProfile.totalStudyMinutes = (userProfile.totalStudyMinutes||0) + minutes;
+  // Streak
+  const diff = userProfile.lastStudyDate ? Math.floor((new Date(today)-new Date(userProfile.lastStudyDate))/86400000) : 1;
+  if(userProfile.lastStudyDate !== today) {
+    userProfile.streak = diff===1 ? (userProfile.streak||0)+1 : 1;
+    userProfile.lastStudyDate = today;
+  }
+  // Weekly data (auto-resets every Monday)
+  checkWeekReset();
+  const dayIdx = (new Date().getDay()+6)%7; // Mon=0 ... Sun=6
+  if(!userProfile.weekData) userProfile.weekData = [0,0,0,0,0,0,0];
+  userProfile.weekData[dayIdx] = (userProfile.weekData[dayIdx]||0) + minutes;
+  userProfile.weekMinutes  = (userProfile.weekMinutes||0)  + minutes;
+  userProfile.weekSessions = (userProfile.weekSessions||0) + 1;
   saveProfile();
 }
 
@@ -2579,12 +2625,16 @@ function renderDashboard() {
   renderWeekChart(); renderDashExams(); renderDashTimetable();
 }
 function renderWeekChart() {
-  const days=['M','T','W','T','F','S','S'], data=userProfile.weekData||[0,0,0,0,0,0,0];
+  checkWeekReset(); // ensure data is for current week
+  const days=['M','T','W','T','F','S','S'];
+  const data = userProfile.weekData||[0,0,0,0,0,0,0];
   const max=Math.max(...data,1), today=(new Date().getDay()+6)%7;
   const total=data.reduce((a,b)=>a+b,0);
-  const chart=document.getElementById('week-chart'); chart.innerHTML='';
+  const chart=document.getElementById('week-chart');
+  if(!chart) return;
+  chart.innerHTML='';
   const weekLabel=document.getElementById('week-total-label');
-  if(weekLabel) weekLabel.textContent=total<60?`${total} min total`:`${(total/60).toFixed(1)}h total`;
+  if(weekLabel) weekLabel.textContent=total<60?`${total} min this week`:`${(total/60).toFixed(1)}h this week`;
   data.forEach((v,i)=>{
     const pct=Math.round((v/max)*100);
     const w=document.createElement('div'); w.className='wbar-wrap';
@@ -2916,35 +2966,45 @@ async function callClaude(){
    PROGRESS
 ════════════════════════════════════════════════ */
 function renderProgress(){
-  const m=userProfile.totalStudyMinutes||0, target=600;
-  const pct=Math.min(Math.round((m/target)*100),100);
-  const circ=389.6;
-  const offset=circ-(circ*pct/100);
+  // ── Weekly stats (reset every Monday) ──
+  checkWeekReset();
+  const weekMins     = (userProfile.weekData||[0,0,0,0,0,0,0]).reduce((a,b)=>a+b,0);
+  const weekHours    = weekMins / 60;
+  const weekSessions = userProfile.weekSessions || 0;
+  const weekTarget   = 600; // 10 hours per week
+
+  // Ring chart — tracks THIS WEEK only
+  const pct    = Math.min(Math.round((weekMins/weekTarget)*100),100);
+  const circ   = 389.6;
+  const offset = circ-(circ*pct/100);
   document.getElementById('progress-ring').style.strokeDashoffset=offset;
   document.getElementById('ring-pct').textContent=pct+'%';
 
-  // Hours goal
-  const h=m/60;
-  document.getElementById('goal-hours-done').textContent=h.toFixed(1);
-  const hp=Math.min(Math.round((h/10)*100),100);
+  // Update the label to say "This Week"
+  const ringLbl = document.querySelector('.section-sub.ring-sub');
+  if(ringLbl) ringLbl.textContent = 'This week: ' + (weekHours.toFixed(1)) + 'h / 10h target';
+
+  // Hours goal — THIS WEEK
+  document.getElementById('goal-hours-done').textContent=weekHours.toFixed(1);
+  const hp=Math.min(Math.round((weekHours/10)*100),100);
   document.getElementById('goal-bar-hours').style.width=hp+'%';
   document.getElementById('goal-pct-hours').textContent=hp+'%';
 
-  // Cards goal
+  // Cards goal — all-time (cards don't reset)
   const cl=flashcards.length, cp=Math.min(Math.round((cl/20)*100),100);
   document.getElementById('goal-cards-done').textContent=cl;
   document.getElementById('goal-bar-cards').style.width=cp+'%';
   document.getElementById('goal-pct-cards').textContent=cp+'%';
 
-  // Streak goal
+  // Streak goal — current streak
   const st=userProfile.streak||0, sp=Math.min(Math.round((st/7)*100),100);
   document.getElementById('goal-streak-done').textContent=st;
   document.getElementById('goal-bar-streak').style.width=sp+'%';
   document.getElementById('goal-pct-streak').textContent=sp+'%';
 
-  // Sessions goal
-  const sl=sessions.length, sep=Math.min(Math.round((sl/14)*100),100);
-  document.getElementById('goal-sess-done').textContent=sl;
+  // Sessions goal — THIS WEEK
+  const sep=Math.min(Math.round((weekSessions/14)*100),100);
+  document.getElementById('goal-sess-done').textContent=weekSessions;
   document.getElementById('goal-bar-sess').style.width=sep+'%';
   document.getElementById('goal-pct-sess').textContent=sep+'%';
 }
@@ -3548,12 +3608,11 @@ function renderReport() {
   if(lbl) lbl.textContent = fmt(weekStart) + ' — ' + fmt(weekEnd);
 
   // Stats
+  checkWeekReset();
   const weekData   = userProfile.weekData || [0,0,0,0,0,0,0];
   const weekMins   = weekData.reduce((a,b)=>a+b,0);
   const weekHours  = (weekMins/60).toFixed(1);
-  const sessions   = (userProfile.sessions||[]).filter(s => {
-    try { return new Date(s.date) >= weekStart; } catch(e){ return false; }
-  }).length;
+  const sessions   = userProfile.weekSessions || 0;
   const streak     = userProfile.streak || 0;
   const xp         = getXP();
   const cards      = (flashcards||[]).length;
@@ -3821,4 +3880,5 @@ function renderSpinHistory() {
 </script>
 </body>
 </html>
+
 
